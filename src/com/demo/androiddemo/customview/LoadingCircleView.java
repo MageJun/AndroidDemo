@@ -41,25 +41,37 @@ public class LoadingCircleView extends BaseView {
 		drawCircle1(canvas, radius_5);
 	}
 	
+	private int circleCounts = 8;//小圆球个数
+	private int moveTimes = 0;//移动次数
 	private void drawCircle1(Canvas canvas,float radius){
 		int width = getMeasuredWidth();
 		int height = getMeasuredHeight();
 		float center_x = width/2;//视图中心点x坐标
 		float center_y = height/2;//视图中心点y坐标
+		//设置画笔参数
 		Paint paint = new Paint();
 		paint.setAntiAlias(true);
-		paint.setColor(Color.YELLOW);
-		canvas.drawRect(0, 0, width, height, paint);
 		paint.setColor(Color.BLUE);
 		paint.setStyle(Style.STROKE);
+		
 		float big_circle_r = getBigCircleRadius(width/2,height/2);
-		canvas.drawCircle(center_x, center_y, big_circle_r, paint);
-		drawCircleSun(canvas, big_circle_r,big_circle_r*0.15f , center_x, center_y, 180,paint);
-		drawCircleSun(canvas, big_circle_r,big_circle_r*0.2f , center_x, center_y, 270,paint);
-//		drawCircleSun(canvas, big_circle_r,big_circle_r*0.25f , center_x, center_y, 300,paint);
-		drawCircleSun(canvas, big_circle_r,big_circle_r*0.3f , center_x, center_y, 0,paint);
-		drawCircleSun(canvas, big_circle_r,big_circle_r*0.35f , center_x, center_y, 90,paint);
-//		drawCircleSun(canvas, big_circle_r,big_circle_r*0.4f , center_x, center_y, 120,paint);
+		for(int i = 0;i<circleCounts;i++){
+			//每次重绘时，画小圆的逻辑：
+			//小圆半径不变
+			//小圆的角度逐渐变化
+			//angle_= 360/circleCounts = 每一个间隔的角度
+			//index = (i+rotateCount)%circleCounts = 每个小圆重绘后的index
+			//angle_*index = 每个小圆此时对应的角度
+			double angle = ((i+moveTimes)%circleCounts)*(360/circleCounts)+180;
+			if(angle>=360){
+				angle=angle-360;
+			}
+			drawCircleSun(canvas, big_circle_r,big_circle_r*(0.15f+i*0.025f) , center_x, center_y, angle,paint);
+		}
+		//每重绘一次，相当于每个小圆移动了一次，移动次数+1
+		moveTimes++;
+		//每隔100ms重绘一次
+		postInvalidateDelayed(100);
 	}
 	
 	
@@ -75,11 +87,12 @@ public class LoadingCircleView extends BaseView {
 	}
 	
 	private void drawCircleSun(Canvas canvas,float radius,float targetRaidus,float center_x,float center_y,double angle,Paint paint){
-		float targetX = (float) (center_x+radius*Math.cos(angle));
-		float targetY = (float) (center_y+radius*Math.sin(angle));
-		paint.setColor(Color.RED);
+		float targetX = (float) (center_x+radius*Math.cos(angle*3.14/180));
+		float targetY = (float) (center_y+radius*Math.sin(angle*3.14/180));
+		paint.setColor(Color.BLUE);
+		paint.setStyle(Style.FILL);
 		canvas.drawCircle(targetX, targetY, targetRaidus, paint);
-		
+//		canvas.drawLine(center_x, center_y, targetX, targetY, paint);
 	}
 
 	@Override

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 定义自定义LoadingCircle的属性集合 -->
+    <declare-styleable name="LoadingCircleView">
+        <attr name="circle_color" format="color"/>
+        <attr name="load_speed" format="float"/>
+    </declare-styleable>
+</resources>

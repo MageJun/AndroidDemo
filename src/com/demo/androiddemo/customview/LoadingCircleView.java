@@ -1,7 +1,10 @@
 package com.demo.androiddemo.customview;
 
+import com.demo.androiddemo.R;
+
 import android.R.color;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -12,8 +15,8 @@ import android.view.ViewGroup.LayoutParams;
 public class LoadingCircleView extends BaseView {
 	
 	/**
-	 * Áù¸öĞ¡ÇòµÄ½ø¶ÈÌõ
-	 * Ë®Æ½·½ÏòÉÏ£¬×ó±ßÓĞÒ»¸ö×îĞ¡µÄĞ¡Çò£¬Ë³Ê±ÕëÔö´óĞ¡ÇòÌå»ı£¬ÓÒ±ßÓĞÒ»¸öĞ¡Çò£¬ÉÏÏÂ¸÷Á½¸öĞ¡Çò
+	 * å…­ä¸ªå°çƒçš„è¿›åº¦æ¡
+	 * æ°´å¹³æ–¹å‘ä¸Šï¼Œå·¦è¾¹æœ‰ä¸€ä¸ªæœ€å°çš„å°çƒï¼Œé¡ºæ—¶é’ˆå¢å¤§å°çƒä½“ç§¯ï¼Œå³è¾¹æœ‰ä¸€ä¸ªå°çƒï¼Œä¸Šä¸‹å„ä¸¤ä¸ªå°çƒ
 	 * @param context
 	 */
 	
@@ -26,6 +29,12 @@ public class LoadingCircleView extends BaseView {
 	
 	private int m_width = 100;
 	private int m_height = 100;
+	
+	private final int def_circleColor = Color.GREEN;
+	private final float def_loadSpeed=100f;
+	
+	private int mCircleColor=def_circleColor;
+	private float mLoadSpeed=def_loadSpeed;
 
 	public LoadingCircleView(Context context) {
 		super(context);
@@ -33,22 +42,38 @@ public class LoadingCircleView extends BaseView {
 
 	public LoadingCircleView(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		TypedArray tArray = context.obtainStyledAttributes(attrs, R.styleable.LoadingCircleView);
+		if(tArray!=null){
+			int count = tArray.getIndexCount();
+			for (int i = 0; i <count; i++) {
+				int attrId = tArray.getIndex(i);
+				switch (attrId) {
+				case R.styleable.LoadingCircleView_circle_color:
+					mCircleColor = tArray.getColor(R.styleable.LoadingCircleView_circle_color, def_circleColor);
+					break;
+				case R.styleable.LoadingCircleView_load_speed:
+					float speed = tArray.getFloat(R.styleable.LoadingCircleView_load_speed, 1);
+					mLoadSpeed = def_loadSpeed/speed;
+					break;
+				}
+			}
+		}
+		tArray.recycle();
 	}
 	
 	@Override
 	protected void onDraw(Canvas canvas) {
-//		super.onDraw(canvas);
 		drawCircle1(canvas, radius_5);
 	}
 	
-	private int circleCounts = 8;//Ğ¡Ô²Çò¸öÊı
-	private int moveTimes = 0;//ÒÆ¶¯´ÎÊı
+	private int circleCounts = 8;//å°åœ†çƒä¸ªæ•°
+	private int moveTimes = 0;//ç§»åŠ¨æ¬¡æ•°
 	private void drawCircle1(Canvas canvas,float radius){
 		int width = getMeasuredWidth();
 		int height = getMeasuredHeight();
-		float center_x = width/2;//ÊÓÍ¼ÖĞĞÄµãx×ø±ê
-		float center_y = height/2;//ÊÓÍ¼ÖĞĞÄµãy×ø±ê
-		//ÉèÖÃ»­±Ê²ÎÊı
+		float center_x = width/2;//è§†å›¾ä¸­å¿ƒç‚¹xåæ ‡
+		float center_y = height/2;//è§†å›¾ä¸­å¿ƒç‚¹yåæ ‡
+		//è®¾ç½®ç”»ç¬”å‚æ•°
 		Paint paint = new Paint();
 		paint.setAntiAlias(true);
 		paint.setColor(Color.BLUE);
@@ -56,26 +81,26 @@ public class LoadingCircleView extends BaseView {
 		
 		float big_circle_r = getBigCircleRadius(width/2,height/2);
 		for(int i = 0;i<circleCounts;i++){
-			//Ã¿´ÎÖØ»æÊ±£¬»­Ğ¡Ô²µÄÂß¼­£º
-			//Ğ¡Ô²°ë¾¶²»±ä
-			//Ğ¡Ô²µÄ½Ç¶ÈÖğ½¥±ä»¯
-			//angle_= 360/circleCounts = Ã¿Ò»¸ö¼ä¸ôµÄ½Ç¶È
-			//index = (i+rotateCount)%circleCounts = Ã¿¸öĞ¡Ô²ÖØ»æºóµÄindex
-			//angle_*index = Ã¿¸öĞ¡Ô²´ËÊ±¶ÔÓ¦µÄ½Ç¶È
+			//æ¯æ¬¡é‡ç»˜æ—¶ï¼Œç”»å°åœ†çš„é€»è¾‘ï¼š
+			//å°åœ†åŠå¾„ä¸å˜
+			//å°åœ†çš„è§’åº¦é€æ¸å˜åŒ–
+			//angle_= 360/circleCounts = æ¯ä¸€ä¸ªé—´éš”çš„è§’åº¦
+			//index = (i+rotateCount)%circleCounts = æ¯ä¸ªå°åœ†é‡ç»˜åçš„index
+			//angle_*index = æ¯ä¸ªå°åœ†æ­¤æ—¶å¯¹åº”çš„è§’åº¦
 			double angle = ((i+moveTimes)%circleCounts)*(360/circleCounts)+180;
 			if(angle>=360){
 				angle=angle-360;
 			}
 			drawCircleSun(canvas, big_circle_r,big_circle_r*(0.15f+i*0.025f) , center_x, center_y, angle,paint);
 		}
-		//Ã¿ÖØ»æÒ»´Î£¬Ïàµ±ÓÚÃ¿¸öĞ¡Ô²ÒÆ¶¯ÁËÒ»´Î£¬ÒÆ¶¯´ÎÊı+1
+		//æ¯é‡ç»˜ä¸€æ¬¡ï¼Œç›¸å½“äºæ¯ä¸ªå°åœ†ç§»åŠ¨äº†ä¸€æ¬¡ï¼Œç§»åŠ¨æ¬¡æ•°+1
 		moveTimes++;
-		//Ã¿¸ô100msÖØ»æÒ»´Î
-		postInvalidateDelayed(100);
+		//æ¯éš”100msé‡ç»˜ä¸€æ¬¡
+		postInvalidateDelayed((long) mLoadSpeed);
 	}
 	
 	
-	//»ñÈ¡Õû¸ö½ø¶ÈÌõËùÔÚ´óÔ²ĞÎµÄ°ë¾¶
+	//è·å–æ•´ä¸ªè¿›åº¦æ¡æ‰€åœ¨å¤§åœ†å½¢çš„åŠå¾„
 	private float getBigCircleRadius(int width,int height) {
 		int p_left = getPaddingLeft();
 		int p_top = getPaddingTop();
@@ -89,7 +114,7 @@ public class LoadingCircleView extends BaseView {
 	private void drawCircleSun(Canvas canvas,float radius,float targetRaidus,float center_x,float center_y,double angle,Paint paint){
 		float targetX = (float) (center_x+radius*Math.cos(angle*3.14/180));
 		float targetY = (float) (center_y+radius*Math.sin(angle*3.14/180));
-		paint.setColor(Color.BLUE);
+		paint.setColor(mCircleColor);
 		paint.setStyle(Style.FILL);
 		canvas.drawCircle(targetX, targetY, targetRaidus, paint);
 //		canvas.drawLine(center_x, center_y, targetX, targetY, paint);

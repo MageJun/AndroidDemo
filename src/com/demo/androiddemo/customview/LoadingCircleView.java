@@ -30,14 +30,15 @@ public class LoadingCircleView extends BaseView {
 	private int m_width = 100;
 	private int m_height = 100;
 	
-	private final int def_circleColor = Color.GREEN;
-	private final float def_loadSpeed=100f;
+	private final int def_circleColor = Color.GREEN;//默认进度球颜色
+	private final float maxLoadSpeed=100f;//最大旋转速度
 	
 	private int mCircleColor=def_circleColor;
-	private float mLoadSpeed=def_loadSpeed;
+	private float mLoadSpeed=maxLoadSpeed;
 
 	public LoadingCircleView(Context context) {
 		super(context);
+		init();
 	}
 
 	public LoadingCircleView(Context context, AttributeSet attrs) {
@@ -53,14 +54,24 @@ public class LoadingCircleView extends BaseView {
 					break;
 				case R.styleable.LoadingCircleView_load_speed:
 					float speed = tArray.getFloat(R.styleable.LoadingCircleView_load_speed, 1);
-					mLoadSpeed = def_loadSpeed/speed;
+					if(speed<=0||speed>2){
+						speed = 1f;
+					}
+					mLoadSpeed = maxLoadSpeed/speed;
 					break;
 				}
 			}
 		}
 		tArray.recycle();
+		init();
 	}
-	
+	private Paint mPaint;
+	private void init() {
+		mPaint = new Paint();
+		mPaint.setAntiAlias(true);
+		mPaint.setColor(Color.BLUE);
+	}
+
 	@Override
 	protected void onDraw(Canvas canvas) {
 		drawCircle1(canvas, radius_5);
@@ -74,10 +85,6 @@ public class LoadingCircleView extends BaseView {
 		float center_x = width/2;//视图中心点x坐标
 		float center_y = height/2;//视图中心点y坐标
 		//设置画笔参数
-		Paint paint = new Paint();
-		paint.setAntiAlias(true);
-		paint.setColor(Color.BLUE);
-		paint.setStyle(Style.STROKE);
 		
 		float big_circle_r = getBigCircleRadius(width/2,height/2);
 		for(int i = 0;i<circleCounts;i++){
@@ -91,7 +98,7 @@ public class LoadingCircleView extends BaseView {
 			if(angle>=360){
 				angle=angle-360;
 			}
-			drawCircleSun(canvas, big_circle_r,big_circle_r*(0.15f+i*0.025f) , center_x, center_y, angle,paint);
+			drawCircleSun(canvas, big_circle_r,big_circle_r*(0.15f+i*0.025f) , center_x, center_y, angle,mPaint);
 		}
 		//每重绘一次，相当于每个小圆移动了一次，移动次数+1
 		moveTimes++;

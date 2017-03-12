@@ -1,19 +1,45 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-     xmlns:custom="http://schemas.android.com/apk/res-auto">
-     <!-- 声明自定义属性命名空间的第二种方式： xmlns:custom="http://schemas.android.com/apk/res/PackageName" -->
+    android:layout_height="match_parent" >
 
-    <TextView
+    <!-- 声明自定义属性命名空间的第二种方式： xmlns:custom="http://schemas.android.com/apk/res/PackageName" -->
+
+    <com.demo.androiddemo.customview.LoadingLatticeView
+        android:id="@+id/loadingLatticeView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
-    
-    <com.demo.androiddemo.customview.LoadingCircleView 
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/loadingCircleView1"
+        android:layout_marginRight="70dp"
+        android:layout_marginTop="16dp" />
+
+    <com.demo.androiddemo.customview.LoadingCircleView
+        android:id="@+id/loadingCircleView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="52dp"
+        android:layout_marginTop="16dp"
         custom:circle_color="@android:color/holo_blue_bright"
-        custom:load_speed="1.5"
-        android:layout_centerInParent="true"/>
+        custom:load_speed="1.5" />
+
+    <com.demo.androiddemo.customview.DrawPathTest
+        android:id="@+id/drawPathTest1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/loadingLatticeView1"
+        android:layout_marginTop="51dp" />
+
+    <com.demo.androiddemo.customview.LoadingArrawView
+        android:id="@+id/loadingArrawView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="22dp"
+        android:layout_marginLeft="25dp" />
 
 </RelativeLayout>

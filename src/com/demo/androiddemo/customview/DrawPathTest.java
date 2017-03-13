@@ -56,7 +56,7 @@ public class DrawPathTest extends BaseView {
 		//设置第四个点的坐标，这个点的坐标的偏移量，是基于最有一个点的坐标开始的
 		//方法中，凡是以r开头的，就是说偏移量是相对于上一个点来说的
 		mPath.rLineTo(120, height/2);
-		//画一个圆，是相对于(0,0)的地点位置画一个圆,CW顺时针方向 ，CCW逆时针方向
+		//画一个圆，是相对于(0,0)的地点位置画一个圆,CW顺时针方向 ，CCW逆时针方向,使用渐变颜色时有用
 //		mPath.addCircle(width/2, height/2, 20, Direction.CCW);
 		//添加一个圆弧，oval 椭圆   startAngle 开始角度   扇形的弧度
 //		RectF oval = new RectF(width/2-10, height/2-20, width/2+20, height/2+10);

@@ -1,10 +1,14 @@
 package com.demo.androiddemo.customview;
 
+import android.R;
+import android.R.color;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
+import android.graphics.Path.Direction;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.DragEvent;
 import android.view.ViewGroup.LayoutParams;
@@ -17,7 +21,7 @@ public class LoadingArrawView extends BaseView {
 	private int mWidth = 100;
 	private int mHeight =100;
 	
-	private int mStrokeWidth = 2;
+	private int mStrokeWidth = 5;
 
 	public LoadingArrawView(Context context) {
 		super(context);
@@ -34,12 +38,13 @@ public class LoadingArrawView extends BaseView {
 		mPaint.setAntiAlias(true);
 		mPaint.setStyle(Style.STROKE);
 		mPaint.setStrokeWidth(mStrokeWidth);
+		mPaint.setColor(0xff00ddff);
 		mPathArraw_1 = new Path();
 		mPathArraw_2 = new Path();
 	}
 	
-	private int mMoveTime = 0;
-	private int mSpeed = 100;
+	private float mMoveLength = 0;
+	private int mSpeed = 80;
 	@Override
 	protected void onDraw(Canvas canvas) {
 		mPathArraw_1.reset();
@@ -53,14 +58,17 @@ public class LoadingArrawView extends BaseView {
 		float center_x = width/2;
 		float center_y = height/2;
 		float radius = Math.min((width-padingX-mStrokeWidth*2), (height-padingY-mStrokeWidth*2))/2;
-		canvas.drawCircle(center_x, center_y, radius, mPaint);
-		
+		float radius_ = radius+mStrokeWidth/2;
+		Path clipPath = new Path();
+		clipPath.moveTo(center_x, 0);
+		clipPath.addCircle(center_x, center_y, radius_, Direction.CW);
+		canvas.clipPath(clipPath);
 		//画出箭头1
 		//先画出竖线，确认初始开始时的起点和终点坐标
-		if (mMoveTime <= radius*2 ) {
+		if (mMoveLength <= radius*2 ) {
 			float arrawLength = radius;
 			float arraw1_start_x = center_x;
-			float arraw1_start_y = center_y - arrawLength / 2 + mMoveTime;
+			float arraw1_start_y = center_y - arrawLength / 2 + mMoveLength;
 			float arraw1_dst_x = center_x;
 			float arraw1_dst_y = arraw1_start_y + arrawLength;
 
@@ -86,10 +94,9 @@ public class LoadingArrawView extends BaseView {
 			
 			//画出第二个箭头，开始的时候是隐藏的
 			float arraw2_start_x = center_x;
-			float arraw2_start_y = center_y - 5*arrawLength  + mMoveTime;
+			float arraw2_start_y = center_y - arrawLength*2-arrawLength/2  + mMoveLength;
 			float arraw2_dst_x = center_x;
 			float arraw2_dst_y = arraw2_start_y + arrawLength;
-
 			mPathArraw_2.moveTo(arraw2_start_x, arraw2_start_y);
 			mPathArraw_2.lineTo(arraw2_dst_x, arraw2_dst_y);
 
@@ -103,20 +110,22 @@ public class LoadingArrawView extends BaseView {
 			// 右边斜边起点坐标
 			float arraw2_right_x = arraw2_dst_x + arraw2_lr_length;
 			float arraw2_right_y = arraw2_dst_y - arraw2_lr_length;
-
 			path2.moveTo(arraw2_left_x, arraw2_left_y);
 			path2.lineTo(arraw2_dst_x, arraw2_dst_y);
 			path2.lineTo(arraw2_right_x, arraw2_right_y);
 			
 			mPathArraw_2.addPath(path2);
+			mPathArraw_1.addPath(mPathArraw_2);
 		}
 		
 		canvas.drawPath(mPathArraw_1, mPaint);
-		canvas.drawPath(mPathArraw_2, mPaint);
-		postInvalidateDelayed(mSpeed);
-		mMoveTime+=radius/5;
-		if(mMoveTime>=radius*2)
-			mMoveTime=0;
+//		canvas.drawPath(mPathArraw_2, mPaint);
+		mMoveLength+=radius/5;
+		canvas.drawCircle(center_x, center_y, radius, mPaint);
+//		mMoveTime++;
+		if(mMoveLength>radius*2)
+			mMoveLength=0;
+//		postInvalidateDelayed(mSpeed);
 	}
 	
 	private float validateBound(float length){

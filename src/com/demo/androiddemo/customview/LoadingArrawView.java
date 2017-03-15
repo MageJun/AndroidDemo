@@ -105,6 +105,7 @@ public class LoadingArrawView extends BaseView {
 				if(mCircleMoveLength<=mCircleMoveSpeed){
 					postInvalidateDelayed(mSpeed);
 				}else{
+					//重置
 					reset();
 				}
 			}

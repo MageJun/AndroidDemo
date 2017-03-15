@@ -27,7 +27,7 @@ public class MainActivity extends Activity {
 			mLoadingArraw.startLoading();
 			break;
 		case R.id.stop:
-			mLoadingArraw.stopLoading();
+			mLoadingArraw.loadingComplete();
 			break;
 		}
 	}

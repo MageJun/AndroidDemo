@@ -42,4 +42,23 @@
         android:layout_marginBottom="22dp"
         android:layout_marginLeft="25dp" />
 
+    <Button
+        android:id="@+id/start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/loadingArrawView1"
+        android:layout_centerHorizontal="true"
+        android:text="StartLoading"
+        android:onClick="onClick" />
+
+    <Button
+        android:id="@+id/stop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/button1"
+        android:layout_marginLeft="27dp"
+        android:layout_toRightOf="@+id/button1"
+        android:text="StopLoading"
+        android:onClick="onClick" />
+
 </RelativeLayout>

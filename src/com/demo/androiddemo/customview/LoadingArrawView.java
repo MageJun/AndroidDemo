@@ -45,6 +45,9 @@ public class LoadingArrawView extends BaseView {
 	
 	private float mMoveLength = 0;
 	private int mSpeed = 80;
+	
+	private boolean isStarted = false;
+	
 	@Override
 	protected void onDraw(Canvas canvas) {
 		mPathArraw_1.reset();
@@ -115,17 +118,26 @@ public class LoadingArrawView extends BaseView {
 			path2.lineTo(arraw2_right_x, arraw2_right_y);
 			
 			mPathArraw_2.addPath(path2);
-			mPathArraw_1.addPath(mPathArraw_2);
 		}
 		
 		canvas.drawPath(mPathArraw_1, mPaint);
-//		canvas.drawPath(mPathArraw_2, mPaint);
-		mMoveLength+=radius/5;
+		canvas.drawPath(mPathArraw_2, mPaint);
 		canvas.drawCircle(center_x, center_y, radius, mPaint);
-//		mMoveTime++;
-		if(mMoveLength>radius*2)
-			mMoveLength=0;
-//		postInvalidateDelayed(mSpeed);
+		if(isStarted||mMoveLength!=0){
+			mMoveLength+=radius/5;
+			if(mMoveLength>=radius*2)
+				mMoveLength=0;
+			postInvalidateDelayed(mSpeed);
+		}
+	}
+	
+	public void startLoading(){
+		isStarted = true;
+		postInvalidate();
+	}
+	
+	public void stopLoading(){
+		isStarted = false;
 	}
 	
 	private float validateBound(float length){

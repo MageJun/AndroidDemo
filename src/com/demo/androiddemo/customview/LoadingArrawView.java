@@ -22,7 +22,7 @@ public class LoadingArrawView extends BaseView {
 	private int mWidth = 100;
 	private int mHeight =100;
 	
-	private int mStrokeWidth = 5;
+	private int mStrokeWidth = 6;
 
 	public LoadingArrawView(Context context) {
 		super(context);
@@ -47,12 +47,13 @@ public class LoadingArrawView extends BaseView {
 	private float mMoveLength = 0;//箭头移动的距离
 	private float mRetractionLength=0;//箭头回缩的距离
 	private float mCircleMoveLength=0;//圆点画圆移动的距离
-	private float mCircleMoveSpeed = 10;
+	private float mCircleMoveSpeed = 5;
 	private int mSpeed = 80;
 	
 	private boolean isStarted = false;
 	private boolean isCompleted = false;
 	private int mDefColor = 0xff00ddff;
+	private int mDefColor2 = 0xff99cc00;
 	
 	@Override
 	protected void onDraw(Canvas canvas) {
@@ -63,16 +64,20 @@ public class LoadingArrawView extends BaseView {
 		
 		int padingX = getPaddingLeft()+getPaddingRight();
 		int padingY = getPaddingTop()+getPaddingBottom();
-		//先画出外围的圆
+		//计算出中心点坐标
 		float center_x = width/2;
 		float center_y = height/2;
+		//计算出整个圆形范围的半径
 		float radius = Math.min((width-padingX-mStrokeWidth*2), (height-padingY-mStrokeWidth*2))/2;
+		//这个半径是从画布上剪切出来的圆的半径，比目标圆半径大画笔宽度的一半
 		float radius_ = radius+mStrokeWidth/2;
 		Path clipPath = new Path();
 		clipPath.moveTo(center_x, 0);
 		clipPath.addCircle(center_x, center_y, radius_, Direction.CW);
+		//剪切出要用到的圆形画布区
 		canvas.clipPath(clipPath);
 		mPaint.setColor(mDefColor);
+		//画出目标圆形
 		canvas.drawCircle(center_x, center_y, radius, mPaint);
 		//未加载完成时
 		if (mMoveLength!=0||!isCompleted) {
@@ -98,7 +103,7 @@ public class LoadingArrawView extends BaseView {
 				postInvalidateDelayed(mSpeed);
 			}else if(mCircleMoveLength<=mCircleMoveSpeed){
 				RectF rf = new RectF(mStrokeWidth, mStrokeWidth, mStrokeWidth+radius*2, mStrokeWidth+radius*2);
-				mPaint.setColor(Color.BLACK);
+				mPaint.setColor(mDefColor2);
 				canvas.drawArc(rf, -90, mCircleMoveLength*(360/mCircleMoveSpeed), false, mPaint);
 				drawArrawView3(canvas,center_x,center_y,radius);
 				mCircleMoveLength++;
@@ -147,7 +152,7 @@ public class LoadingArrawView extends BaseView {
 		canvas.drawLine(center_x-radius/4, center_y, center_x+radius/4, center_y, mPaint);
 		float circle_x = center_x;
 		float circle_y = center_y+radius/2-length;
-		canvas.drawCircle(circle_x, circle_y, mStrokeWidth/2, mPaint);
+		canvas.drawCircle(circle_x, circle_y, mStrokeWidth/4, mPaint);
 	}
 
 	private void drawArrawView2(Canvas canvas, float center_x, float center_y, float radius, float length) {

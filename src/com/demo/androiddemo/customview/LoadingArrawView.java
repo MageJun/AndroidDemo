@@ -79,7 +79,7 @@ public class LoadingArrawView extends BaseView {
 		mPaint.setColor(mDefColor);
 		//画出目标圆形
 		canvas.drawCircle(center_x, center_y, radius, mPaint);
-		//未加载完成时
+		//未加载完毕，或者已加载完毕，但是箭头还没有复位
 		if (mMoveLength!=0||!isCompleted) {
 			//画出箭头1
 			//先画出竖线，确认初始开始时的起点和终点坐标
@@ -91,17 +91,19 @@ public class LoadingArrawView extends BaseView {
 					mMoveLength = 0;
 				postInvalidateDelayed(mSpeed);
 			}
-		}else{
+		}else{//已加载完毕，并且箭头已经复位
 			//将箭头回缩，编程一个圆点和一条直线 ，圆点半径是画笔宽度的一半，直线长度是原来箭头直线长度的一半
 			if(mRetractionLength<=(radius+radius/2)){
-				if(mRetractionLength<=radius/2){
+				if(mRetractionLength<=radius/2){//箭头还未回缩到指定位置
 					drawArrawView2(canvas,center_x,center_y,radius,mRetractionLength);
 				}else{
+					//箭头已经回缩完毕，开始上升小球
 					drawCircleAndLine(canvas,center_x,center_y,radius,mRetractionLength);
 				}
 				mRetractionLength+=(radius/2)/4;
 				postInvalidateDelayed(mSpeed);
 			}else if(mCircleMoveLength<=mCircleMoveSpeed){
+				//小球达到指定位置，开始画圆和对勾
 				RectF rf = new RectF(mStrokeWidth, mStrokeWidth, mStrokeWidth+radius*2, mStrokeWidth+radius*2);
 				mPaint.setColor(mDefColor2);
 				canvas.drawArc(rf, -90, mCircleMoveLength*(360/mCircleMoveSpeed), false, mPaint);

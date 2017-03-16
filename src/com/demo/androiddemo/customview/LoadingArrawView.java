@@ -197,7 +197,7 @@ public class LoadingArrawView extends BaseView {
 		float arraw1_start_x = center_x;
 		float arraw1_start_y = center_y - arrawLength / 2 + length;
 		float arraw1_dst_x = center_x;
-		float arraw1_dst_y = arraw1_start_y + arrawLength;
+		float arraw1_dst_y = center_y + arrawLength / 2+length;
 
 		mPathArraw_1.moveTo(arraw1_start_x, arraw1_start_y);
 		mPathArraw_1.lineTo(arraw1_dst_x, arraw1_dst_y);

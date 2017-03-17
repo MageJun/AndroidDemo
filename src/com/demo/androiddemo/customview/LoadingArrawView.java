@@ -22,7 +22,7 @@ public class LoadingArrawView extends BaseView {
 	private int mWidth = 100;
 	private int mHeight =100;
 	
-	private int mStrokeWidth = 6;
+	private float mStrokeWidth = 6;
 
 	public LoadingArrawView(Context context) {
 		super(context);
@@ -67,15 +67,21 @@ public class LoadingArrawView extends BaseView {
 		//计算出中心点坐标
 		float center_x = width/2;
 		float center_y = height/2;
+		float min = Math.min((width-padingX), (height-padingY));
+		mStrokeWidth = min/20;
 		//计算出整个圆形范围的半径
-		float radius = Math.min((width-padingX-mStrokeWidth*2), (height-padingY-mStrokeWidth*2))/2;
+		float radius = (min-mStrokeWidth*2)/2;
 		//这个半径是从画布上剪切出来的圆的半径，比目标圆半径大画笔宽度的一半
-		float radius_ = radius+mStrokeWidth/2;
+		float radius_ = radius+mStrokeWidth/4;
 		Path clipPath = new Path();
-		clipPath.moveTo(center_x, 0);
-		clipPath.addCircle(center_x, center_y, radius_, Direction.CW);
+		clipPath.moveTo(center_x, center_y-radius_);
+		RectF oval = new RectF(center_x-radius_, center_y-radius_, center_x+radius_, center_y+radius_);
+		clipPath.arcTo(oval, -90, 359);
+		clipPath.close();
+//		clipPath.addCircle(center_x, center_y, radius_, Direction.CW);
 		//剪切出要用到的圆形画布区
 		canvas.clipPath(clipPath);
+		canvas.drawColor(Color.YELLOW);
 		mPaint.setColor(mDefColor);
 		//画出目标圆形
 		canvas.drawCircle(center_x, center_y, radius, mPaint);
@@ -104,8 +110,8 @@ public class LoadingArrawView extends BaseView {
 				postInvalidateDelayed(mSpeed);
 			}else if(mCircleMoveLength<=mCircleMoveSpeed){
 				//小球达到指定位置，开始画圆和对勾
-				RectF rf = new RectF(mStrokeWidth, mStrokeWidth, mStrokeWidth+radius*2, mStrokeWidth+radius*2);
 				mPaint.setColor(mDefColor2);
+				RectF rf = new RectF(center_x-radius, center_y-radius, center_x+radius, center_y+radius);
 				canvas.drawArc(rf, -90, mCircleMoveLength*(360/mCircleMoveSpeed), false, mPaint);
 				drawArrawView3(canvas,center_x,center_y,radius);
 				mCircleMoveLength++;
@@ -151,6 +157,7 @@ public class LoadingArrawView extends BaseView {
 
 	private void drawCircleAndLine(Canvas canvas, float center_x, float center_y, float radius,
 			float length) {
+		mPaint.setColor(mDefColor2);
 		canvas.drawLine(center_x-radius/4, center_y, center_x+radius/4, center_y, mPaint);
 		float circle_x = center_x;
 		float circle_y = center_y+radius/2-length;

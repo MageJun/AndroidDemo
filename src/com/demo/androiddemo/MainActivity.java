@@ -3,6 +3,7 @@ package com.demo.androiddemo;
 import com.demo.androiddemo.customview.LoadingArrawView;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -10,17 +11,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-public class MainActivity extends Activity {
+public class MainActivity extends BaseActivity {
 
 	private LoadingArrawView mLoadingArraw;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-		mLoadingArraw = (LoadingArrawView) findViewById(R.id.loadingArrawView1);
-	}
-	
 	public void onClick(View v){
 		switch (v.getId()) {
 		case R.id.start:
@@ -29,6 +23,16 @@ public class MainActivity extends Activity {
 		case R.id.stop:
 			mLoadingArraw.loadingComplete();
 			break;
+		case R.id.lightning:
+			Intent intent = new Intent(this,ReticularTestActivity.class);
+			startActivity(intent);
+			break;
 		}
+	}
+
+	@Override
+	public void onActivityCreate() {
+		setContentView(R.layout.activity_main);
+		mLoadingArraw = (LoadingArrawView) findViewById(R.id.loadingArrawView1);
 	}
 }

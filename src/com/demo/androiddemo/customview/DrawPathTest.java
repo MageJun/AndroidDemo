@@ -110,23 +110,9 @@ public class DrawPathTest extends BaseView {
 		//画一个中间线
 		canvas.drawLine(0, height/2, getMeasuredWidth(), height/2, mPaint);
 	}
-	
-	@Override
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-		
-		int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-		int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-		
-		LayoutParams lp = getLayoutParams();
-		
-		if(lp.height == LayoutParams.WRAP_CONTENT){
-			if(MeasureSpec.AT_MOST==heightMode||MeasureSpec.EXACTLY==heightMode){
-				heightSize = height;
-			}
-		}
-		
-		setMeasuredDimension(widthSize, heightSize);
-	}
 
+	@Override
+	protected void initWidthAndHeight() {
+		mHeight = height;
+	}
 }

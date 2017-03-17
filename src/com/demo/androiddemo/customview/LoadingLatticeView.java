@@ -10,6 +10,9 @@ import android.util.AttributeSet;
 import android.view.ViewGroup.LayoutParams;
 
 public class LoadingLatticeView extends BaseView {
+	
+	private int m_width = 100;
+	private int m_height = 100;
 
 	public LoadingLatticeView(Context context) {
 		super(context);
@@ -20,12 +23,6 @@ public class LoadingLatticeView extends BaseView {
 		super(context, attrs);
 		init();
 	}
-
-
-
-
-	private int mWidth = 100;
-	private int mHeight = 100;
 	private Paint mPaint ;
 	private int defPading = 10;
 	private int mLatticeCounts =12;
@@ -95,39 +92,11 @@ public class LoadingLatticeView extends BaseView {
 		int min = Math.min(width, height);
 		return min/2;
 	}
-	@Override
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		int widthSpec = MeasureSpec.getSize(widthMeasureSpec);
-		int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-		
-		int heightSpec = MeasureSpec.getSize(heightMeasureSpec);
-		int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-		
-		LayoutParams lp = getLayoutParams();
-		
-		int width = widthSpec;
-		int height = heightSpec;
-		
-		if(lp.width==LayoutParams.WRAP_CONTENT){
-			switch(widthMode){
-			case MeasureSpec.EXACTLY:
-			case MeasureSpec.AT_MOST:
-				width = mWidth;
-				break;
-			}
-		}
-		
-		if(lp.height==LayoutParams.WRAP_CONTENT){
-			switch(heightMode){
-			case MeasureSpec.EXACTLY:
-			case MeasureSpec.AT_MOST:
-				height = mHeight;
-				break;
-			}
-		}
-		
-		setMeasuredDimension(width, height);
-	}
 	
+	@Override
+	protected void initWidthAndHeight() {
+		mWidth = m_width;
+		mHeight = m_height;
+	}
 
 }

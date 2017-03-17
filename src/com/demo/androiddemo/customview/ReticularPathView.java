@@ -35,8 +35,8 @@ public class ReticularPathView extends BaseView {
 	}
 	private Path mPath;
 	private Paint mPaint;
-	private int mWidth = 200;
-	private int mHeight = 200;
+	private int width = 200;
+	private int height = 200;
 	
 	private float mPaintWidth = 5;
 	private int mLightingColor = 0xFFC9D0FF;
@@ -118,29 +118,15 @@ public class ReticularPathView extends BaseView {
 		return true;
 	}
 	
+	@Override
+	protected void initWidthAndHeight() {
+		mHeight = height;
+		mWidth = width;
+	}
 	
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-		int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-		
-		int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-		int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-		LayoutParams lp = getLayoutParams();
-		
-		if(lp.width==LayoutParams.WRAP_CONTENT){
-			if(widthMode==MeasureSpec.AT_MOST||widthMode==MeasureSpec.EXACTLY){
-				widthSize = mWidth;
-			}
-		}
-		
-		if(lp.height==LayoutParams.WRAP_CONTENT){
-			if(heightMode==MeasureSpec.AT_MOST||widthMode==MeasureSpec.EXACTLY){
-				heightSize = mHeight;
-			}
-		}
-		setMeasuredDimension(widthSize, heightSize);
+		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 	}
-	
 
 }

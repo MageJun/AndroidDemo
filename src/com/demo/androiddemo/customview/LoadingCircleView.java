@@ -126,36 +126,9 @@ public class LoadingCircleView extends BaseView {
 		canvas.drawCircle(targetX, targetY, targetRaidus, paint);
 //		canvas.drawLine(center_x, center_y, targetX, targetY, paint);
 	}
-
 	@Override
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		int mode_w = MeasureSpec.getMode(widthMeasureSpec);
-		int size_w = MeasureSpec.getSize(widthMeasureSpec);
-
-		int mode_h = MeasureSpec.getMode(heightMeasureSpec);
-		int size_h = MeasureSpec.getSize(heightMeasureSpec);
-		LayoutParams lp = getLayoutParams();
-		int width = size_w;
-		int height = size_h;
-		switch (mode_w) {
-		case MeasureSpec.AT_MOST:
-		case MeasureSpec.UNSPECIFIED:
-			if (lp.width == LayoutParams.WRAP_CONTENT) {
-				width = m_width;
-			}
-			break;
-		}
-		switch (mode_h) {
-		case MeasureSpec.AT_MOST:
-		case MeasureSpec.UNSPECIFIED:
-			if (lp.height == LayoutParams.WRAP_CONTENT) {
-				height = m_height;
-			}
-			break;
-		}
-//		setMeasuredDimension(MeasureSpec.makeMeasureSpec(width, mode_w), 
-//				MeasureSpec.makeMeasureSpec(height, mode_h));
-		setMeasuredDimension(width, height);
+	protected void initWidthAndHeight() {
+		this.mWidth = m_width;
+		this.mHeight = m_height;
 	}
-	
 }

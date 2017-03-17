@@ -19,8 +19,8 @@ public class LoadingArrawView extends BaseView {
 	private Paint mPaint;
 	private Path mPathArraw_1,mPathArraw_2;
 	
-	private int mWidth = 100;
-	private int mHeight =100;
+	private int m_width = 100;
+	private int m_height =100;
 	
 	private float mStrokeWidth = 6;
 
@@ -275,28 +275,8 @@ public class LoadingArrawView extends BaseView {
 	}
 	
 	@Override
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-		int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-		
-		int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-		int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-		LayoutParams lp = getLayoutParams();
-		
-		if(lp.width==LayoutParams.WRAP_CONTENT){
-			if(widthMode==MeasureSpec.AT_MOST||widthMode==MeasureSpec.EXACTLY){
-				widthSize = mWidth;
-			}
-		}
-		
-		if(lp.height==LayoutParams.WRAP_CONTENT){
-			if(heightMode==MeasureSpec.AT_MOST||widthMode==MeasureSpec.EXACTLY){
-				heightSize = mHeight;
-			}
-		}
-		
-		setMeasuredDimension(widthSize, heightSize);
+	protected void initWidthAndHeight() {
+		mWidth = m_width;
+		mHeight = m_height;
 	}
-	
-	
 }

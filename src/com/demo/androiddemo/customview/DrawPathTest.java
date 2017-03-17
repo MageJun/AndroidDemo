@@ -3,6 +3,7 @@ package com.demo.androiddemo.customview;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.ComposePathEffect;
 import android.graphics.CornerPathEffect;
 import android.graphics.DashPathEffect;
 import android.graphics.DiscretePathEffect;
@@ -15,6 +16,7 @@ import android.graphics.PathDashPathEffect;
 import android.graphics.PathMeasure;
 import android.os.Build;
 import android.graphics.RectF;
+import android.graphics.SumPathEffect;
 import android.util.AttributeSet;
 import android.view.ViewGroup.LayoutParams;
 
@@ -85,12 +87,11 @@ public class DrawPathTest extends BaseView {
 		//画出来的第一条实线的长度=第一条实线长度-偏移量
 		//注：使用这个效果，Paint的必须是Stroke或者StrokeAndFIll类型，如果是FILL类型，没有效果
 		//下面这种方式是一种特例，可以实现动态牵引效果
-//		mPaint.setPathEffect(new DashPathEffect(new float[]{pathLength,pathLength}, mPhase*pathLength));
-//		mPhase-=0.01;
-//		if(mPhase<0){
-//			mPhase = 1;
-//		}
-//		invalidate();
+		DashPathEffect dpe = new DashPathEffect(new float[]{pathLength,pathLength}, mPhase*pathLength);
+		mPhase-=0.01;
+		if(mPhase<0){
+			mPhase = 1;
+		}
 		//使用CornerPathEffect
 		//使线和线之间变得平滑，实现累世圆弧和切线的效果，参数就是圆弧的弧度
 //		mPaint.setPathEffect(new CornerPathEffect(10));
@@ -104,11 +105,15 @@ public class DrawPathTest extends BaseView {
 		Path shape = new Path();
 //		shape.addCircle(0, 0, 3, Direction.CW);
 		shape.addRect(0, 0, 3, 4, Direction.CW);
-		mPaint.setPathEffect(new PathDashPathEffect(shape, 10, 0, PathDashPathEffect.Style.MORPH));
+		PathDashPathEffect ppe =new PathDashPathEffect(shape, 10, 0, PathDashPathEffect.Style.MORPH);
+//		SumPathEffect spe = new SumPathEffect(ppe,dpe);
+		ComposePathEffect cpe = new ComposePathEffect(ppe, dpe);
+		mPaint.setPathEffect(cpe);
 //		mPath.setFillType(FillType.EVEN_ODD);
 		canvas.drawPath(mPath, mPaint);
 		//画一个中间线
 		canvas.drawLine(0, height/2, getMeasuredWidth(), height/2, mPaint);
+		invalidate();
 	}
 
 	@Override

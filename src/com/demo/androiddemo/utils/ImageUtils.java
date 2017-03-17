@@ -18,7 +18,12 @@ public class ImageUtils {
 
 	public ImageUtils() {
 	}
-	
+	/**
+	 * 图片切块
+	 * @param bitmap
+	 * @param count
+	 * @return
+	 */
 	public static List<PieceImage> createBitmap(Bitmap bitmap,int count){
 		List<PieceImage> bitmaps = new ArrayList<PieceImage>();
 		int bWidth = bitmap.getWidth();

@@ -8,9 +8,15 @@ import com.demo.androiddemo.utils.PieceImage;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.PorterDuff.Mode;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
@@ -51,7 +57,28 @@ public class BrokenGlassView extends BaseView {
 		super.onDraw(canvas);
 		Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.tmp);
 		Bitmap cBitmap = ImageUtils.compressImage( bitmap, reqWidth, reqHeight);
-		List<PieceImage> images = ImageUtils.createBitmap(cBitmap, 9);
+		//测试Canvas进行剪切之后，如何操作剪切的canvas和剩下的canvas
+//		Canvas bitCanvas = new Canvas(cBitmap);
+		int cbWidth = cBitmap.getWidth();
+		int cbHeight = cBitmap.getHeight();
+		Bitmap tmpBitmap = Bitmap.createBitmap(cbWidth, cbHeight, Config.ARGB_8888);
+		Canvas tmpCanvas = new Canvas(tmpBitmap);
+		Path clipPath = new Path();
+		clipPath.moveTo(0, 0);
+		clipPath.lineTo(cbWidth, cbHeight);
+		clipPath.lineTo(cbWidth, 0);
+		clipPath.close();
+		tmpCanvas.save();
+		tmpCanvas.clipPath(clipPath);
+		tmpCanvas.drawBitmap(cBitmap, 0, 0, mPaint);
+		Bitmap b1= Bitmap.createBitmap(tmpBitmap);
+		canvas.drawBitmap(b1, 0, 0, mPaint);
+		tmpCanvas.restore();
+		clearCanvas(tmpCanvas);
+//		tmpCanvas.drawBitmap(cBitmap, 0, 0, mPaint);
+		canvas.drawBitmap(tmpBitmap, 0, cbHeight, mPaint);
+//		canvas.drawBitmap(tmpBitmap, 0, cbHeight, mPaint);
+		/*List<PieceImage> images = ImageUtils.createBitmap(cBitmap, 9);
 		int count = 0;
 		int heightMove = 0;
 		for(int i = 0;i<3;i++){
@@ -63,9 +90,19 @@ public class BrokenGlassView extends BaseView {
 				count++;
 				widthMove+=10;
 			}
-		}
+		}*/
 	}
 	
+	/**
+	 * 清空指定Canvas
+	 * @param canvas
+	 */
+	private void clearCanvas(Canvas canvas) {
+		Paint p = new Paint();
+		// 清屏
+		p.setXfermode(new PorterDuffXfermode(Mode.CLEAR));
+		canvas.drawPaint(p);
+	}
 
 	private int m_width = 100;
 	private int m_height = 100;

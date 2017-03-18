@@ -8,7 +8,9 @@ import java.util.List;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory.Options;
 import android.util.DisplayMetrics;
 import android.view.WindowId;
@@ -19,12 +21,12 @@ public class ImageUtils {
 	public ImageUtils() {
 	}
 	/**
-	 * 图片切块
+	 * 图片切块,按需要的数量，平均切割成矩形
 	 * @param bitmap
 	 * @param count
 	 * @return
 	 */
-	public static List<PieceImage> createBitmap(Bitmap bitmap,int count){
+	public static List<PieceImage> createPieceImage(Bitmap bitmap,int count){
 		List<PieceImage> bitmaps = new ArrayList<PieceImage>();
 		int bWidth = bitmap.getWidth();
 		int bHeight = bitmap.getHeight();
@@ -45,6 +47,28 @@ public class ImageUtils {
 			}
 		}
 		return bitmaps;
+	}
+	
+	
+	/**
+	 * 图片切块,按需要的数量，以中心点为中心，切割成不规则图形
+	 * @param srcBitmap
+	 * @param count
+	 * @param interval
+	 * @return
+	 */
+	public static List<PieceImage> createPieceImageShape(Bitmap srcBitmap,int count,float interval){
+		List<PieceImage> images = new ArrayList<PieceImage>();
+		int s_width = srcBitmap.getWidth();
+		int s_height = srcBitmap.getHeight();
+		Bitmap tmpBitmap = Bitmap.createBitmap(s_width, s_height, Config.ARGB_8888);
+		Canvas tmpCanvas = new Canvas(tmpBitmap);
+		Point point = new Point();
+		point.setX(0);
+		point.setY(0);
+		
+		
+		return images;
 	}
 	
 	public static Bitmap compressImage(Bitmap bitmap,int reqWidth,int reqHeight){

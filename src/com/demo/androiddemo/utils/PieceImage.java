@@ -7,6 +7,7 @@ public class PieceImage {
 	private Bitmap bitmap;
 	private int x;
 	private int y;
+	private Point endPonit;
 
 	public PieceImage() {
 		// TODO Auto-generated constructor stub
@@ -35,4 +36,14 @@ public class PieceImage {
 	public void setY(int y) {
 		this.y = y;
 	}
+
+	public Point getEndPonit() {
+		return endPonit;
+	}
+
+	public void setEndPonit(Point endPonit) {
+		this.endPonit = endPonit;
+	}
+	
+	
 }

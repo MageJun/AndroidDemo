@@ -10,7 +10,13 @@
     <com.demo.androiddemo.customview.BrokenGlassView 
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible"/>
+        android:visibility="gone"/>
+    <com.demo.androiddemo.customview.MathDemoView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="visible"
+        />
     
 
 </RelativeLayout>

@@ -42,7 +42,7 @@ public class SnowflakeView extends BaseView {
 	
 	private final  int  SEGMENT = 30;//弯曲幅度 
 	private  float mHeartSize = 10f;//心形的半径
-	private final int LINES = 5;//线路个数
+	private final int LINES = 8;//线路个数
 	private final int CURVE = 5;//曲线个数
 	private DisplayMetrics mDisplay;
 	private ArrayList<Path> mPathArray ;
@@ -55,17 +55,16 @@ public class SnowflakeView extends BaseView {
 	
 	private void init(Context context){
 		mDisplay = Utils.getDisplayMetrics(context);
-		mPathArray = new ArrayList<>();
-		mInnerPathList = new ArrayList<>();
-		mHeartArray = new ArrayList<>();
+		mPathArray = new ArrayList<Path>();
+		mInnerPathList = new ArrayList<InnerPath>();
+		mHeartArray = new ArrayList<Path>();
 		mPaint  = new Paint();
 		mPaint.setStrokeWidth(2);
 		mPaint.setAntiAlias(true);
 		mPaint.setColor(Color.BLUE);
 		mPaint.setStyle(Style.STROKE);
-		buildPaths();
-		buildCircles();
-//		buildHeartArray();
+//		buildPaths();
+//		buildCircles();
 		mValueAnimator = new ValueAnimator();
 		mValueAnimator.setFloatValues(new float[]{0f,1f});
 		mValueAnimator.setDuration(15000);
@@ -103,15 +102,16 @@ public class SnowflakeView extends BaseView {
 	private AnimatorUpdateListener mAnimatorLIstener = new AnimatorUpdateListener() {
 		@Override
 		public void onAnimationUpdate(ValueAnimator animation) {
-			float value = (float) animation.getAnimatedValue();
+			float value = (Float) animation.getAnimatedValue();
 			Log.i(TAG, "onAnimationUpdate() value = "+value);
 			updataCirclesPos(value);
 			invalidate();
 		}
 	};
 	private void buildPaths() {
-		float dis = mDisplay.widthPixels/6;
-		for(int i = 1;i<6;i++){
+		int width = getMeasuredWidth();
+		float dis = width/(LINES+1);
+		for(int i = 1;i<=LINES;i++){
 			float offeset = dis*i;
 			Path path = makePathCubic(offeset, dis*2);
 			mPathArray.add(path);
@@ -123,9 +123,15 @@ public class SnowflakeView extends BaseView {
 	protected void onDraw(Canvas canvas) {
 		canvas.drawColor(Color.TRANSPARENT);
 		/*mPaint.setColor(Color.BLUE);
+		mPaint.setStyle(Style.STROKE);
 		for(int i=0;i<mPathArray.size();i++){
 			canvas.drawPath(mPathArray.get(i),mPaint);
 		}*/
+		if(isFirst){
+			isFirst = false;
+			buildPaths();
+			buildCircles();
+		}
 		mPaint.setColor(Color.RED);
 		for (InnerPath inner : mInnerPathList) {
 			mPaint.setStyle(Style.FILL);
@@ -194,7 +200,8 @@ public class SnowflakeView extends BaseView {
 	//Cp2:上一个贝塞尔曲线的第二个控制点
 	private Path makePathCubic(float offeset,float segment){
 		Path path = new Path();
-		float dis = mDisplay.heightPixels/CURVE;
+		int height = getMeasuredHeight();
+		float dis = height/CURVE;
 		float start_x = offeset/*mDisplay.heightPixels/2*/;
 		float start_y = 0;
 		float preEnd_x = offeset;
@@ -233,6 +240,7 @@ public class SnowflakeView extends BaseView {
 				
 			}
 		}
+		path.offset(0, dis*0.5f);
 		return path;
 		
 	}

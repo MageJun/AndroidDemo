@@ -62,6 +62,10 @@ public class Utils {
    public static float nextFloat(float a){
         return random.nextFloat() * a;
     }
+   
+   public static float netFloat(){
+	   return random.nextFloat();
+   }
 
    public   static boolean nextBoolean(){
         return random.nextBoolean();

@@ -128,7 +128,6 @@ public class SnowflakeView extends BaseView {
 		}*/
 		mPaint.setColor(Color.RED);
 		for (InnerPath inner : mInnerPathList) {
-//			canvas.drawCircle(inner.x, inner.y, 10, mPaint);
 			mPaint.setStyle(Style.FILL);
 			drawHeartByBezier(canvas, mPaint, inner.x, inner.y, 10);
 		}
@@ -343,7 +342,7 @@ public class SnowflakeView extends BaseView {
 		float c4_x = x+CONSTANT_FORCIRCLE*radius;
 		float c4_y = y+radius;
 		float e2_x = x;
-		float e2_y = y+radius+tranLen;
+		float e2_y = y+radius+tranLen*2/5;
 		path.cubicTo(c3_x, c3_y, c4_x, c4_y, e2_x, e2_y);
 		
 		float c5_x = x-CONSTANT_FORCIRCLE*radius;

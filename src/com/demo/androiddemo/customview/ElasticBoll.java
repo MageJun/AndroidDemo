@@ -66,7 +66,7 @@ public class ElasticBoll extends BaseView {
 	private float segment = radius * 3 / 2;
 
 	private void updataBoll() {
-		float seg = segment / 10;
+		float seg = segment / 50;
 		float RANGE_X = getMeasuredWidth()-100;
 		ThreeBessel first = mBoll.getFirstBessel();
 		ThreeBessel sec = mBoll.getSedBessel();
@@ -95,7 +95,8 @@ public class ElasticBoll extends BaseView {
 				third.contro1_x += seg;
 				four.contro2_x += seg;
 				four.end_x += seg;
-			} else {
+			} else {//开始平移
+//				seg*=10;
 				mBoll.x += seg;
 				first.start_x += seg;
 				first.contro1_x += seg;
@@ -115,7 +116,7 @@ public class ElasticBoll extends BaseView {
 				four.end_x += seg;
 			}
 		} else if (first.end_x >= RANGE_X) {
-			if ((first.end_x - mBoll.x) > mBoll.raidus*2/3) {
+			if ((first.end_x - mBoll.x) > mBoll.raidus) {
 				mBoll.x += seg;
 				first.start_x += seg;
 				first.contro1_x += seg;
@@ -131,7 +132,7 @@ public class ElasticBoll extends BaseView {
 				four.contro1_x += seg;
 				four.contro2_x += seg;
 				four.end_x += seg;
-			}else if((mBoll.x - third.end_x) > mBoll.raidus*2/3){
+			}else if((mBoll.x - third.end_x) > mBoll.raidus){
 				
 				third.contro2_x += seg;
 				third.end_x += seg;

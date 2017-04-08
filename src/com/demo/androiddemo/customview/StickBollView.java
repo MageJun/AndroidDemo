@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.demo.androiddemo.utils.PathUtils;
 import com.demo.androiddemo.utils.Utils;
 
 import android.animation.Animator;
@@ -65,39 +66,7 @@ public class StickBollView extends BaseView {
 		mValueAnimator = new ValueAnimator();
 		mValueAnimator.setFloatValues(new float[]{0f,1f});
 		mValueAnimator.setDuration(1000);
-//		mValueAnimator.addListener(new AnimatorListener() {
-//			
-//			@Override
-//			public void onAnimationStart(Animator animation) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//			
-//			@Override
-//			public void onAnimationRepeat(Animator animation) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//			
-//			@Override
-//			public void onAnimationEnd(Animator animation) {
-//				if(mProductingBoll!=null){
-//					mBolls.add(mProductingBoll);
-//				}
-//				
-//			}
-//			
-//			@Override
-//			public void onAnimationCancel(Animator animation) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//		});
 		mValueAnimator.addUpdateListener(mAnimatorListener);
-//		mValueAnimator2 = new ValueAnimator();
-//		mValueAnimator2.setFloatValues(new float[]{0f,1f});
-//		mValueAnimator2.setDuration(1000);
-//		mValueAnimator2.addUpdateListener(mAnimatorListener);
 		
 	}
 	private AnimatorUpdateListener mAnimatorListener = new AnimatorUpdateListener(){
@@ -113,24 +82,13 @@ public class StickBollView extends BaseView {
 				Iterator<Boll> iterator = mBolls.iterator();
 				while(iterator.hasNext()){
 					Boll boll = iterator.next();
+					if(boll.stepCount==100){
+						boll.stepCount = 0;
+						boll.isAdd=Utils.nextBoolean();
+					}
 					boll.y-=boll.speed_y;
-					/*if(value==1){
-						Log.i(TAG, "onAnimationUpdate x++");
-						boll.radius++;
-						boolean result = Utils.nextBoolean();
-						if(result){
-							boll.x+=1;
-						}else{
-							boll.x-=1;
-						}
-//						boll.x += Utils.nextFloat(-1f, 1f)*10;
-						boll.x+=2;
-//						boll.x=Utils.nextFloat(-1,1)*boll.x+boll.x;
-					}*/
-//					boll.x += Utils.nextFloat(-1f, 1f)*10;
 					float random = Utils.netFloat()*2;
 					if(boll.isAdd)
-//						boll.x+=random;
 						boll.x+=boll.speed_x;
 					else
 						boll.x-=boll.speed_x;
@@ -139,7 +97,7 @@ public class StickBollView extends BaseView {
 					}else if(boll.x>getMeasuredWidth()-boll.radius){
 						boll.x = getMeasuredWidth()-boll.radius;
 					}
-					
+					boll.stepCount++;
 					if(boll.y<-boll.radius){
 						iterator.remove();
 					}
@@ -163,28 +121,15 @@ public class StickBollView extends BaseView {
 	protected void onDraw(Canvas canvas) {
 		canvas.drawColor(Color.TRANSPARENT);
 		drawBottomBoll(canvas);
-//		drawProductingBoll(canvas);
 		drawBolls(canvas);
 		Path path = makeStickBoll();
 		canvas.drawPath(path, mPaint);
-//		if(!mValueAnimator2.isStarted()){
-//			mValueAnimator2.start();
-//		}
 		if(!mValueAnimator.isStarted()){
 			Boll boll = makeBoll();
 			mBolls.add(boll);
 			mBottomBoll.radius = BOTTOM_BOLL_RADIUS;
 			mValueAnimator.start();
 		}
-	}
-
-	private void drawProductingBoll(Canvas canvas) {
-		if(mProductingBoll!=null){
-			LinearGradient lg = makeLinearShader(mProductingBoll);
-			mPaint.setShader(lg);
-			canvas.drawCircle(mProductingBoll.x, mProductingBoll.y, mProductingBoll.radius, mPaint);
-		}
-		
 	}
 
 	private void drawBolls(Canvas canvas) {
@@ -235,121 +180,13 @@ public class StickBollView extends BaseView {
 		}
 		Boll boll = mBolls.get(size-1);
 		//底部大圆的圆心坐标
-		float cb_x = /*mDisplay.widthPixels/2*/mBottomBoll.x;
-		float cb_y = /*mDisplay.heightPixels*/mBottomBoll.y;
+		float cb_x = mBottomBoll.x;
+		float cb_y = mBottomBoll.y;
 		//小球的圆心坐标
 		float c_x = boll.x;
 		float c_y = boll.y;
-		/*//根据两圆的圆心，计算夹角
-		float disx = Math.abs(cb_x-c_x);
-		float disy = Math.abs(cb_y-c_y);
-		//圆心距离
-		float dis = (float) Math.sqrt(disx*disx+disy*disy);
-		float sin = disy/dis;
-		float cos = disx/dis;
-		//两个贝塞尔曲线的控制点，是两个圆心的连线中点
-		float control_x =(cb_x+c_x)/2;
-		float control_y = (cb_y+c_y)/2;
-		//底部大圆的左右连点，左边点作为Path的起点
-		float cb_left_x = cb_x-mBottomBoll.radius*sin;
-		float cb_left_y = cb_y-mBottomBoll.radius*cos;
-		float cb_right_x = cb_x+mBottomBoll.radius*sin;
-		float cb_right_y = cb_y+mBottomBoll.radius*cos;
-		path.moveTo(cb_left_x, cb_left_y);
-		//小球的左右连点
-		float c_r = boll.radius;
-		float c_left_x = c_x-c_r*sin;
-		float c_left_y = c_y-c_r*cos;
-		float c_right_x = c_x+c_r*sin;
-		float c_right_y = c_y+c_r*cos;
-		path.quadTo(control_x, control_y, c_left_x, c_left_y);
-		path.lineTo(c_right_x, c_right_y);
-		path.quadTo(control_x, control_y, cb_right_x, cb_right_y);
-		path.close();*/
-		path = makePathBetweenCircles(cb_x, cb_y, mBottomBoll.radius, c_x, c_y, boll.radius);
+		path = PathUtils.makePathBetweenCircles(cb_x, cb_y, mBottomBoll.radius, c_x, c_y, boll.radius,MAXDIS);
 		return path;
-	}
-	
-	private Path makePathBetweenCircles(float c1x,float c1y,float radius1,float c2x,float c2y,float radius2){
-		Path path = new Path();
-		//圆C1的圆心坐标
-		float c1_x = c1x;
-		float c1_y = c1y;
-		//小球的圆心坐标
-		float c_x = c2x;
-		float c_y = c2y;
-		//根据两圆的圆心，计算夹角
-		float disx = c1_x-c_x;
-		float disy = c1_y-c_y;
-		//圆心距离
-		float dis = (float) Math.sqrt(disx*disx+disy*disy);
-		if(dis>=MAXDIS){
-			return path;
-		}
-		
-		float sin = Math.abs(disy)/dis;
-		float cos = Math.abs(disx)/dis;
-		//两个贝塞尔曲线的控制点，是两个圆心的连线中点
-		float control_x =(c1_x+c_x)/2;
-		float control_y = (c1_y+c_y)/2;
-		float c1_start_x=0;
-		float c1_start_y=0;
-		float c1_end_x=0;
-		float c1_end_y=0;
-		float c2_start_x=0;
-		float c2_start_y=0;
-		float c2_end_x=0;
-		float c2_end_y=0;
-		if(disx<=0&&disy>=0){//C2在C1的右上方包括右方和上方
-		//底部大圆的左右连点，左边点作为Path的起点
-		 c1_start_x = c1_x-radius1*sin;
-		 c1_start_y = c1_y-radius1*cos;
-		 c1_end_x = c1_x+radius1*sin;
-		 c1_end_y = c1_y+radius1*cos;
-		
-		 c2_start_x = c_x-radius2*sin;
-		 c2_start_y = c_y-radius2*cos;
-		 c2_end_x = c_x+radius2*sin;
-		 c2_end_y = c_y+radius2*cos;
-		}else if(disx>=0&&disy>=0){//C2在C1的左上方
-			c1_start_x = c1_x-radius1*sin;
-			 c1_start_y = c1_y+radius1*cos;
-			 c1_end_x = c1_x+radius1*sin;
-			 c1_end_y = c1_y-radius1*cos;
-			
-			 c2_start_x = c_x-radius2*sin;
-			 c2_start_y = c_y+radius2*cos;
-			 c2_end_x = c_x+radius2*sin;
-			 c2_end_y = c_y-radius2*cos;
-		}else if(disx>=0&&disy<=0){//C2在C1的左下方
-			 c1_start_x = c1_x-radius1*sin;
-			 c1_start_y = c1_y-radius1*cos;
-			 c1_end_x = c1_x+radius1*sin;
-			 c1_end_y = c1_y+radius1*cos;
-			
-			 c2_start_x = c_x-radius2*sin;
-			 c2_start_y = c_y-radius2*cos;
-			 c2_end_x = c_x+radius2*sin;
-			 c2_end_y = c_y+radius2*cos;
-		}else if(disx<=0&&disy<=0){//C2在C1的右下方
-			c1_start_x = c1_x-radius1*sin;
-			 c1_start_y = c1_y+radius1*cos;
-			 c1_end_x = c1_x+radius1*sin;
-			 c1_end_y = c1_y-radius1*cos;
-			
-			 c2_start_x = c_x-radius2*sin;
-			 c2_start_y = c_y+radius2*cos;
-			 c2_end_x = c_x+radius2*sin;
-			 c2_end_y = c_y-radius2*cos;
-		}
-		 
-		path.moveTo(c1_start_x, c1_start_y);
-		path.quadTo(control_x, control_y, c2_start_x, c2_start_y);
-		path.lineTo(c2_end_x, c2_end_y);
-		path.quadTo(control_x, control_y, c1_end_x, c1_end_y);
-		path.close();
-		return path;
-	
 	}
 
 	private void drawBottomBoll(Canvas canvas) {
@@ -379,6 +216,7 @@ public class StickBollView extends BaseView {
 		boolean isAdd;
 		float speed_x;
 		float speed_y;
+		int stepCount;
 	}
 
 }

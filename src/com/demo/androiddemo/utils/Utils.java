@@ -79,5 +79,19 @@ public class Utils {
 		int disWidth = metric.widthPixels;
 		return metric;
    }
-
+   
+   /**
+    * 计算两点间直线距离
+    * @param srcX
+    * @param srcY
+    * @param dstX
+    * @param dstY
+    * @return
+    */
+	public static  float calcStraightLen(float srcX, float srcY, float dstX, float dstY) {
+		float disx = srcX-dstX;
+		float disy = srcY-dstY;
+		float len = (float) Math.sqrt(disx*disx+disy*disy);
+		return len;
+	}
 }

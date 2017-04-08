@@ -198,11 +198,16 @@ public class SnowflakeView extends BaseView {
 	//Cc1:当前贝塞尔曲线的第一个控制点
 	//P1:上一个贝塞尔曲线的终点
 	//Cp2:上一个贝塞尔曲线的第二个控制点
-	private Path makePathCubic(float offeset,float segment){
-		Path path = new Path();
+	private Path makePathCubic(float offeset,float curvature){
 		int height = getMeasuredHeight();
-		float dis = height/CURVE;
-		float start_x = offeset/*mDisplay.heightPixels/2*/;
+		float segment = height/CURVE;
+		return makePathCubic(offeset, curvature,segment);
+		
+	}
+	
+	private Path makePathCubic(float offeset, float curvature,float segment) {
+		Path path = new Path();
+		float start_x = offeset;
 		float start_y = 0;
 		float preEnd_x = offeset;
 		float preEnd_y = 0;
@@ -210,15 +215,15 @@ public class SnowflakeView extends BaseView {
 		float preC2_y = 0;
 		for(int i=0;i<CURVE;i++){
 			if(i==0){
-				start_y = -dis;
+				start_y = -segment;
 				path.moveTo(start_x, start_y);
-				float control1_x = getControlPoint(offeset, segment);
-				float control1_y = -0.5f*dis;
-				float control2_x = getControlPoint(offeset, segment);
-				float control2_y = 0.5f*dis;
+				float control1_x = getControlPoint(offeset, curvature);
+				float control1_y = -0.5f*segment;
+				float control2_x = getControlPoint(offeset, curvature);
+				float control2_y = 0.5f*segment;
 				
 				float end_x = offeset;
-				float end_y = i*dis+dis;
+				float end_y = i*segment+segment;
 				path.cubicTo(control1_x, control1_y, control2_x, control2_y, end_x, end_y);
 				preC2_x = control2_x;
 				preC2_y = control2_y;
@@ -227,11 +232,11 @@ public class SnowflakeView extends BaseView {
 			}else if(i>0){
 				float control1_x = 2*preEnd_x-preC2_x;
 				float control1_y =  2*preEnd_y-preC2_y;
-				float control2_x = getControlPoint(offeset, segment);
-				float control2_y = i*dis+0.5f*dis;
+				float control2_x = getControlPoint(offeset, curvature);
+				float control2_y = i*segment+0.5f*segment;
 				
 				float end_x = offeset;
-				float end_y = i*dis+dis;
+				float end_y = i*segment+segment;
 				path.cubicTo(control1_x, control1_y, control2_x, control2_y, end_x, end_y);
 				preC2_x = control2_x;
 				preC2_y = control2_y;
@@ -240,9 +245,8 @@ public class SnowflakeView extends BaseView {
 				
 			}
 		}
-		path.offset(0, dis*0.5f);
+		path.offset(0, segment*0.5f);
 		return path;
-		
 	}
 	
 	private float getControlPoint(float x,float segment){

@@ -53,7 +53,7 @@ public class GradientView extends BaseView {
 		Rect r = new Rect(width/2-100, height/2-100,width/2+100, height/2+100);
 		canvas.save();
 		canvas.clipRect(r);
-		canvas.rotate(45,width/2,height/2);
+//		canvas.rotate(45,width/2,height/2);
 		mGradient.setBounds(r);
 //		mGradient.setBounds(width/2-100, height/2-100,width/2+100, height/2+100);
 		mGradient.setColors(new int[]{0x333333, 0xB0333333});

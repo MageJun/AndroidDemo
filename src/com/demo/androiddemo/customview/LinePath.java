@@ -15,7 +15,7 @@ class LinePath extends Path {
 
     public LinePath(){
         super();
-        points = new ArrayList<>();
+        points = new ArrayList<Point>();
         startLength = -1;
         endPoint = new Point();
     }

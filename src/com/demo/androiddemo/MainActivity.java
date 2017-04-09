@@ -1,9 +1,6 @@
 package com.demo.androiddemo;
 
 import com.demo.androiddemo.customview.LoadingArrawView;
-import com.zed3.sipua.common.metadata.AppMetaDatas;
-import com.zed3.sipua.common.metadata.MetaDataKey;
-import com.zed3.sipua.common.metadata.MetaDataManager;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -40,12 +37,16 @@ public class MainActivity extends BaseActivity {
 //			mLoadingArraw.loadingComplete();
 			InnerThread.getHandler().removeCallbacks(testRunnable);
 			break;
-		case R.id.lightning:
+		case R.id.second:
 			Intent intent = new Intent(this,ReticularTestActivity.class);
-			AppMetaDatas amds = MetaDataManager.getInstance(this).getAppMetaDatas(MetaDataKey.KEY_HOME_UI);
-			Log.i(TAG, "amds: "+amds);
-			intent.putExtra("data", amds);
+//			AppMetaDatas amds = MetaDataManager.getInstance(this).getAppMetaDatas(MetaDataKey.KEY_HOME_UI);
+//			Log.i(TAG, "amds: "+amds);
+//			intent.putExtra("data", amds);
 			startActivity(intent);
+			break;
+		case R.id.third:
+			Intent third = new Intent(this,ThirdActivity.class);
+			startActivity(third);
 			break;
 		}
 	}

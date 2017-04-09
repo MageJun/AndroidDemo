@@ -2,11 +2,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
+    <com.demo.androiddemo.customview.BookView 
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"/>
     <com.demo.androiddemo.customview.ReticularPathView 
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
-        android:visibility="visible"/>
+        android:visibility="gone"/>
     <com.demo.androiddemo.customview.BrokenGlassView 
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -29,6 +32,7 @@
      <com.demo.androiddemo.customview.ElasticBoll 
          android:layout_width="match_parent"
          android:layout_height="match_parent"/>
+     
  
 
 </RelativeLayout>

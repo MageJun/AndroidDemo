@@ -34,6 +34,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.demo.androiddemo.ReticularTestActivity"></activity>
+        <activity android:name="com.demo.androiddemo.ThirdActivity"></activity>
     </application>
 
 </manifest>

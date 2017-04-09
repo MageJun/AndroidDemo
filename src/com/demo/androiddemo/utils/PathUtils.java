@@ -244,4 +244,102 @@ public class PathUtils {
 				fourth.getEnd_x(), fourth.getEnd_y());
 		return path;
 	}
+	
+	
+	/**
+	 * 
+	 * @param touchx  手指点击处的x坐标
+	 * @param touchy  手指点击处的y坐标
+	 * @param srcx 翻页角的x坐标
+	 * @param srcy 翻页角的y坐标
+	 * @return
+	 */
+	public static Path[] make(float touchx,float touchy,float srcx,float srcy){
+		
+		Path path = new Path();//整个翻角区域
+		Path path1 = new Path();//显示第一页翻角背景区域
+		Path[] paths = {path,path1};
+		if(touchx==00&&touchy==0){
+			return paths;
+		}
+		
+		float midX = (touchx+srcx)/2;//t s两点连线中点x坐标
+		float midY = (touchy+srcy)/2;//t s两点连线中点y坐标
+		
+		float dis_ms_x = (srcx-midX);//中点同翻页角在X方向上得距离差
+		float dis_ms_y = (midY-srcy);//中点同翻页角在Y方向上得距离差
+		
+		float dis_mt_x = (srcx-midX);//中点同手指点击处在X方向上得距离差
+		float dis_mt_y = (midY-srcy);//中点同手指点击处在Y方向上得距离差
+		
+		//两个控制点，是过t  x两点直线的垂直平分线，同X轴和Y轴的交点，c1是同X轴的交点，c2是同Y轴的交点
+		float c1_x = midX-(dis_ms_y*dis_ms_y)/dis_ms_x;
+		float c1_y = srcy;
+		
+		float c2_x = srcx;
+		float c2_y = midY+(dis_ms_x*dis_ms_x)/dis_ms_y;
+		
+		//两个贝塞尔曲线的起点，分别是过t m两点线段的垂直平分线，同tc1和tc2的交点，s1是同tc1的交点，是tc1的中点；s2是同tc2的交点，是tc2的中点
+		//tc1是t和第一个控制点c1的连线  tc2是t和第二个控制点c2的连线
+		
+		float s1_x = (touchx+c1_x)/2;
+		float s1_y = (touchy+c1_y)/2;
+		float s2_x = (touchx+c2_x)/2;
+		float s2_y = (touchy+c2_y)/2;
+		
+		//两个贝塞尔曲线的终点，分别是过t m两点线段的垂直平分线，同X轴和Y轴的交点，e1是同X轴的交点，e2是同Y轴的交点
+		//要求得这两个点，需要先确定过tc1和tc2中点的直线，然后利用两点式求得这两个点
+		
+		float tc1_x = (touchx+c1_x)/2;
+		float tc1_y = (touchy+c1_y)/2;
+		
+		float tc2_x = (touchx+c2_x)/2;
+		float tc2_y = (touchy+c2_y)/2;
+		
+		//直线的两点式 ：(x-x1)/(x1-x2)=(y-y1)/(y1-y2)
+		
+		float e1_x =(srcy-tc1_y)/(tc1_y-tc2_y)*(tc1_x-tc2_x)+tc1_x;
+		float e1_y = srcy;
+		
+		float e2_x =srcx;
+		float e2_y = (srcx-tc1_x)/(tc1_x-tc2_x)*(tc1_y-tc2_y)+tc1_y;
+		
+		//计算两个翻角最大范围的两个角。翻角的范围是个三角形，顶点是触点位置，另外两个点，分别是a1和a2
+		//a1是s1同e1的连线的中点与c1连线的中点  a2是s2同e2的连线的中点同c2连线的中点
+		float mse1_x = (s1_x+e1_x)/2;
+		float mse1_y = (s1_y+e1_y)/2;
+		
+		float mse2_x = (s2_x+e2_x)/2;
+		float mse2_y = (s2_y+e2_y)/2;
+		float a1_x = (mse1_x+c1_x)/2;
+		float a1_y = (mse1_y+c1_y)/2;
+		float a2_x = (mse2_x+c2_x)/2;
+		float a2_y = (mse2_y+c2_y)/2;
+//		path.moveTo(touchx, touchy);
+//		path.lineTo(s1_x, s1_y);
+//		path.quadTo(c1_x, c1_y, e1_x, e1_y);
+//		
+//		path.lineTo(srcx, srcy);
+//		path.lineTo(s2_x, s2_y);
+//		path.quadTo(c2_x, c2_y, e2_x, e2_y);
+//		path.lineTo(e2_x, e2_y);
+//		path.quadTo(c2_x, c2_y, s2_x, s2_y);
+		path.moveTo(e2_x, e2_y);
+		path.quadTo(c2_x, c2_y, s2_x, s2_y);
+		path.lineTo(touchx, touchy);
+		path.lineTo(s1_x, s1_y);
+		path.quadTo(c1_x, c1_y, e1_x, e1_y);
+		path.lineTo(srcx, srcy);
+		path.close();
+		
+		path1.moveTo(a1_x, a1_y);
+		path1.lineTo(touchx, touchy);
+		path1.lineTo(a2_x, a2_y);
+		path1.close();
+		
+		return paths;
+	}
+	
+	
+	
 }

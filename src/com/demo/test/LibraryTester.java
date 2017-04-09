@@ -4,10 +4,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.demo.androiddemo.DemoApplication;
-import com.zed3.sipua.common.metadata.AppMetaDatas;
-import com.zed3.sipua.common.metadata.MetaData;
-import com.zed3.sipua.common.metadata.MetaDataKey;
-import com.zed3.sipua.common.metadata.MetaDataManager;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -17,7 +13,7 @@ import android.test.AndroidTestCase;
 import android.text.TextUtils;
 import android.util.Log;
 
-public class LibraryTester extends AndroidTestCase {
+public class LibraryTester extends AndroidTestCase {/*
 	private static final String TAG = LibraryTester.class.getSimpleName();
 	private Context mTestContext;
 
@@ -82,4 +78,4 @@ public class LibraryTester extends AndroidTestCase {
 	}
 	
 	
-}
+*/}

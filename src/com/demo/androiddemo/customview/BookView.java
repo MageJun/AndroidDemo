@@ -52,10 +52,30 @@ public class BookView extends BaseView {
 	private ValueAnimator mAnimator1;
 	private ValueAnimator mAnimator2;
 	private State mState;
+	private CornerPos mCornerPos;
 	private float mDistanceX;
 	private float mDistanceY;
 	private  enum State{
 		PREPARED,ANIMATORING;
+	}
+	
+	private enum CornerPos{
+		/**
+		 * 左上角
+		 */
+		LT,
+		/**
+		 * 右上角
+		 */
+		RT,
+		/**
+		 * 左下角
+		 */
+		LB,
+		/**
+		 * 右下角
+		 */
+		RB;
 	}
 	private void init(Context context) {
 		mDisplay = Utils.getDisplayMetrics(context);
@@ -211,7 +231,16 @@ public class BookView extends BaseView {
 		if(!isAdd){
 			return cornerY-touchY;
 		}
-		if(cornerX==0&&cornerY==0){
+		if(mCornerPos==CornerPos.LT){
+			result=height*2-touchY;
+		}else if(mCornerPos==CornerPos.RT){
+			result = height*2-touchY;
+		}else if(mCornerPos==CornerPos.LB){
+			result = -width-touchY;
+		}else if(mCornerPos==CornerPos.RB){
+			result = -width-touchY;
+		}
+/*		if(cornerX==0&&cornerY==0){
 			result=height*2-touchY;
 		}else if(cornerX==width&&cornerY==0){
 			result = height*2-touchY;
@@ -220,7 +249,7 @@ public class BookView extends BaseView {
 		}else if(cornerX==width&&cornerY==height){
 			result = -width-touchY;
 		}
-		return result;
+*/		return result;
 	}
 
 	private void initCorner() {
@@ -229,15 +258,19 @@ public class BookView extends BaseView {
 		if(touchX>=width/2&&(touchY>=height/2&&touchY<=height)){
 			cornerX = width;
 			cornerY = height;
+			mCornerPos = CornerPos.RB;
 		}else if(touchX>=width/2&&(touchY>=0&&touchY<=height/2)){
 			cornerX = width;
 			cornerY = 0;
+			mCornerPos = CornerPos.RT;
 		}else if((touchX<=width/2&&touchX>=0)&&(touchY>=0&&touchY<=height/2)){
 			cornerX = 0;
 			cornerY = 0;
+			mCornerPos = CornerPos.LT;
 		}else if((touchX<=width/2&&touchX>=0)&&(touchY>=height/2&&touchY<=height)){
 			cornerX = 0;
 			cornerY = height;
+			mCornerPos = CornerPos.LB;
 		}else{
 			cornerX = width;
 			cornerY = height;

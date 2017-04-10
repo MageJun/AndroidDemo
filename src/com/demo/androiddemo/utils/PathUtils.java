@@ -256,9 +256,9 @@ public class PathUtils {
 	 */
 	public static Path[] make(float touchx,float touchy,float srcx,float srcy){
 		
-		Path path = new Path();//整个翻角区域
+		Path path0 = new Path();//整个翻角区域
 		Path path1 = new Path();//显示第一页翻角背景区域
-		Path[] paths = {path,path1};
+		Path[] paths = {path0,path1};
 		if(touchx==00&&touchy==0){
 			return paths;
 		}
@@ -327,22 +327,14 @@ public class PathUtils {
 		float a1_y = (msc1_y+mce1_y)/2;
 		float a2_x = (msc2_x+mce2_x)/2;
 		float a2_y = (msc2_y+mce2_y)/2;
-//		path.moveTo(touchx, touchy);
-//		path.lineTo(s1_x, s1_y);
-//		path.quadTo(c1_x, c1_y, e1_x, e1_y);
-//		
-//		path.lineTo(srcx, srcy);
-//		path.lineTo(s2_x, s2_y);
-//		path.quadTo(c2_x, c2_y, e2_x, e2_y);
-//		path.lineTo(e2_x, e2_y);
-//		path.quadTo(c2_x, c2_y, s2_x, s2_y);
-		path.moveTo(e2_x, e2_y);
-		path.quadTo(c2_x, c2_y, s2_x, s2_y);
-		path.lineTo(touchx, touchy);
-		path.lineTo(s1_x, s1_y);
-		path.quadTo(c1_x, c1_y, e1_x, e1_y);
-		path.lineTo(srcx, srcy);
-		path.close();
+		
+		path0.moveTo(e2_x, e2_y);
+		path0.quadTo(c2_x, c2_y, s2_x, s2_y);
+		path0.lineTo(touchx, touchy);
+		path0.lineTo(s1_x, s1_y);
+		path0.quadTo(c1_x, c1_y, e1_x, e1_y);
+		path0.lineTo(srcx, srcy);
+		path0.close();
 		
 		path1.moveTo(a1_x, a1_y);
 		path1.lineTo(touchx, touchy);

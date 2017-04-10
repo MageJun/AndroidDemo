@@ -305,16 +305,28 @@ public class PathUtils {
 		float e2_y = (srcx-tc1_x)/(tc1_x-tc2_x)*(tc1_y-tc2_y)+tc1_y;
 		
 		//计算两个翻角最大范围的两个角。翻角的范围是个三角形，顶点是触点位置，另外两个点，分别是a1和a2
-		//a1是s1同e1的连线的中点与c1连线的中点  a2是s2同e2的连线的中点同c2连线的中点
-		float mse1_x = (s1_x+e1_x)/2;
-		float mse1_y = (s1_y+e1_y)/2;
+		//这两个点的位置，是平行于e1e2、c1c2，并且在这两条直线中间的直线，记做直线a1a2,同两个贝塞尔曲线的交点位置
+		//由a1来说，三角形e1c1s1是第一条贝塞尔曲线起点、控制点和终点连线构成的三角形，直线a1a2过这个三角形
+		//a1a2平行于三角形的边e1s1,并且等分另外两边
+		//有贝塞尔曲线的实现原理来看，当点移动到起点和控制点连线中间时，此时曲线上的点，
+		//必然是起点和控制点连线的中点，到控制点和终点连线的中点的连线的中点
+		//假设Msc是起点、控制点连线中点位置，Mce是控制点、终点连线中点位置，当点移动到Msc位置时，曲线上的点的位置是：（Msc+Mce)/2
+		//msc1这个是s1、c1连线的中点 mce1是c1、e1的连线中点
+		//msc2这个是s2、c2连线的中点 mce2是c2、e2的连线中点
+		//a1是msc1和mce1连线的中点 a2是msc2和mce2连线的中点 
+		float msc1_x = (s1_x+c1_x)/2;
+		float msc1_y = (s1_y+c1_y)/2;
+		float mce1_x = (c1_x+e1_x)/2;
+		float mce1_y = (c1_y+e1_y)/2;
 		
-		float mse2_x = (s2_x+e2_x)/2;
-		float mse2_y = (s2_y+e2_y)/2;
-		float a1_x = (mse1_x+c1_x)/2;
-		float a1_y = (mse1_y+c1_y)/2;
-		float a2_x = (mse2_x+c2_x)/2;
-		float a2_y = (mse2_y+c2_y)/2;
+		float msc2_x = (s2_x+c2_x)/2;
+		float msc2_y = (s2_y+c2_y)/2;
+		float mce2_x = (c2_x+e2_x)/2;
+		float mce2_y = (c2_y+e2_y)/2;
+		float a1_x = (msc1_x+mce1_x)/2;
+		float a1_y = (msc1_y+mce1_y)/2;
+		float a2_x = (msc2_x+mce2_x)/2;
+		float a2_y = (msc2_y+mce2_y)/2;
 //		path.moveTo(touchx, touchy);
 //		path.lineTo(s1_x, s1_y);
 //		path.quadTo(c1_x, c1_y, e1_x, e1_y);

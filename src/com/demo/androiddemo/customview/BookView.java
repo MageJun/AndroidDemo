@@ -21,6 +21,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Region.Op;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.GradientDrawable.Orientation;
 import android.support.v4.animation.AnimatorUpdateListenerCompat;
 import android.support.v4.animation.ValueAnimatorCompat;
 import android.util.AttributeSet;
@@ -85,21 +86,24 @@ public class BookView extends BaseView {
 	private void init(Context context) {
 		mDisplay = Utils.getDisplayMetrics(context);
 		mState = State.PREPARED;
+		initPaint();
+		
+		initShadows();
+		
+		initDemoImg();
+		
+		initAnimators();
+	}
+
+	private void initPaint() {
 		mPaint = new Paint();
 		mPaint.setAntiAlias(true);
 		mPaint.setStyle(Style.STROKE);
 		mPaint.setStrokeWidth(5);
 		mPaint.setColor(Color.RED);
-		
-		mFrontLeftShadow = new GradientDrawable();
-		mFrontRightShadow = new GradientDrawable();
-		mBackShadow = new GradientDrawable();
-		
-		first = BitmapFactory.decodeResource(getResources(), R.drawable.tmp);
-		second = BitmapFactory.decodeResource(getResources(), R.drawable.test2);
-		first = ImageUtils.compressImage( first, mDisplay.widthPixels, mDisplay.heightPixels);
-		second = ImageUtils.compressImage( second,mDisplay.widthPixels, mDisplay.heightPixels);
-		
+	}
+
+	private void initAnimators() {
 		mAnimator1 = new ValueAnimator();
 		mAnimator1.setFloatValues(new float[]{0f,1f});
 		mAnimator1.setDuration(100);
@@ -139,6 +143,25 @@ public class BookView extends BaseView {
 			}
 		});
 	}
+
+	private void initDemoImg() {
+		first = BitmapFactory.decodeResource(getResources(), R.drawable.tmp);
+		second = BitmapFactory.decodeResource(getResources(), R.drawable.test2);
+		first = ImageUtils.compressImage( first, mDisplay.widthPixels, mDisplay.heightPixels);
+		second = ImageUtils.compressImage( second,mDisplay.widthPixels, mDisplay.heightPixels);
+	}
+
+	private void initShadows() {
+		mFrontLeftShadow = new GradientDrawable();
+		mFrontLeftShadow.setColors(colors);
+		mFrontLeftShadow.setOrientation(Orientation.TOP_BOTTOM);
+		mFrontRightShadow = new GradientDrawable();
+		mFrontRightShadow.setColors(colors);
+		mFrontRightShadow.setOrientation(Orientation.TOP_BOTTOM);
+		mBackShadow = new GradientDrawable();
+		mBackShadow.setColors(colors2);
+		mBackShadow.setOrientation(Orientation.TOP_BOTTOM);
+	}
 	
 	protected void reset() {
 		touchX = 0;
@@ -158,16 +181,12 @@ public class BookView extends BaseView {
 		//画当前页要显示的内容
 		canvas.save();
 		canvas.clipPath(paths[0], Op.XOR);
-//		canvas.drawColor(Color.YELLOW);
 		canvas.drawBitmap(first,srcR,dstR, mPaint);
 		canvas.restore();
-//		canvas.drawPath(paths[0], mPaint);
-//		canvas.drawPath(paths[1], mPaint);
 		//画下一页要显示的内容
 		canvas.save();
 		canvas.clipPath(paths[0]);
 		canvas.clipPath(paths[1], Op.DIFFERENCE);
-//		canvas.drawColor(Color.GRAY);
 		canvas.drawBitmap(second,srcR,dstR, mPaint);
 		canvas.restore();
 		//画当前页翻角的背景内容
@@ -180,11 +199,37 @@ public class BookView extends BaseView {
 		drawShadow(canvas,flip);
 	}
 	private int[] colors = new int[]{0x333333, 0xB0333333};
+	private int[] colors2 = new int[]{0xFF111111, 0x10111111};
 	private void drawShadow(Canvas canvas, BookFlip flip) {
-		canvas.save();
 		if(mCornerPos==CornerPos.RB){
-			float angle = (float) Math.toDegrees(Math.atan((Math.abs(flip.e1_y-flip.e2_y)/Math.abs(flip.e1_x-flip.e2_x))));
-			
+			float x1 = flip.a1_x;
+			float y1 = flip.a1_y;
+			float x2 = flip.a2_x;
+			float y2 = flip.a2_y;
+			float angle = (float) Math.toDegrees(Math.atan((Math.abs(y1-y2)/Math.abs(x1-x2))));
+			double length = Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
+			//话下一页画面上的背景阴影
+			mPaint.setColor(Color.RED);
+			canvas.drawLine(0, 0, x1, y1, mPaint);
+			mPaint.setColor(Color.BLUE);
+			canvas.drawLine(0, 0, x2, y2, mPaint);
+			canvas.save();
+			canvas.clipPath(flip.paths[0]);
+			canvas.clipPath(flip.paths[1], Op.DIFFERENCE);
+//			canvas.drawLine(0, 0, flip.e1_x, flip.e1_y, mPaint);
+			canvas.rotate(-angle, x1, y1);
+			int left = (int) x1-500;
+			int top = (int) y1;
+			int right = (int) (x1+length+500);
+//			mPaint.setColor(Color.BLUE);
+//			canvas.drawLine(left, top, right, top, mPaint);
+			int bottom = (int) y1+25;
+			Rect bounds = new Rect(left, top, right, bottom);
+			mBackShadow.setBounds(bounds);
+//			mBackShadow.setColors(colors);
+			mBackShadow.draw(canvas);
+//			canvas.drawRect(bounds, mPaint);
+			canvas.restore();
 		}
 	}
 

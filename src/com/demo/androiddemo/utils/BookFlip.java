@@ -10,6 +10,8 @@ public class BookFlip {
 
 	public BookFlip() {
 		// TODO Auto-generated constructor stub
+		paths[0] = new Path();
+		paths[1] = new Path();
 	}
 	
 	public Path[] paths = new Path[2];

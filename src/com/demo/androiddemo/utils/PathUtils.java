@@ -351,7 +351,8 @@ public class PathUtils {
 		flip.e1_y = e1_y;
 		flip.s2_x = s2_x;
 		flip.s2_y = s2_y;
-		flip.e2_x = e2_x;
+		flip.e2_x = e2_x; 
+		flip.e2_y = e2_y;
 		flip.c1_x = c1_x;
 		flip.c1_y = c1_y;
 		flip.c2_x = c2_x;

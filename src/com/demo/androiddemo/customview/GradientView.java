@@ -64,6 +64,7 @@ public class GradientView extends BaseView {
 //		float angle2 = (float) (angle+Math.toDegrees(Math.atan2(r.bottom, r.right)));
 		double randians = Math.toRadians(-angle);
 		//sin和cos传入的参数是弧度值，不是角度值
+		//canvas 绕着指定的点进行旋转，这个点相对于坐标原点的坐标不变（坐标系旋转前和旋转后，这个点的坐标位置不变）
 		int newX = (int) (Math.cos(randians)*x-Math.sin(randians)*y);
 		int newY = (int) (Math.cos(randians)*y+Math.sin(randians)*x);
 		int len = (int) Math.sqrt((newX-x)*(newX-x)+(newY-y)*(newY-y));

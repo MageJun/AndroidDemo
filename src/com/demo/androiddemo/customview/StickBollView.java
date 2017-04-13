@@ -150,10 +150,11 @@ public class StickBollView extends BaseView {
 	private LinearGradient makeLinearShader(Boll boll) {
 		//45度角线性
 		int angle = 45;
-		float start_x = (float) (boll.x-boll.radius*Math.cos(angle));
-		float start_y = (float) (boll.y-boll.radius*Math.sin(angle));
-		float end_x = (float) (boll.x+boll.radius*Math.cos(angle));
-		float end_y = (float) (boll.y+boll.radius*Math.sin(angle));
+		double randians = Math.toRadians(angle);
+		float start_x = (float) (boll.x-boll.radius*Math.cos(randians));
+		float start_y = (float) (boll.y-boll.radius*Math.sin(randians));
+		float end_x = (float) (boll.x+boll.radius*Math.cos(randians));
+		float end_y = (float) (boll.y+boll.radius*Math.sin(randians));
 		return new LinearGradient(start_x, start_y, end_x, end_y, new int[]{color_1,color_2,color_3}, null,Shader.TileMode.REPEAT);
 	};
 	private Boll makeBoll() {

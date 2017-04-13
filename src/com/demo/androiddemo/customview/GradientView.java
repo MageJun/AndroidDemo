@@ -38,7 +38,7 @@ public class GradientView extends BaseView {
 		mPaint = new Paint();
 		mPaint.setAntiAlias(true);
 		mPaint.setStyle(Style.FILL);
-		mPaint.setStrokeWidth(5);
+		mPaint.setStrokeWidth(2);
 		mPaint.setColor(Color.RED);
 		
 		mGradient = new GradientDrawable();
@@ -47,34 +47,76 @@ public class GradientView extends BaseView {
 	@SuppressLint("NewApi")
 	@Override
 	protected void onDraw(Canvas canvas) {
+//		canvas.drawColor(Color.GREEN);
 		int width = getMeasuredWidth();
 		int height = getMeasuredHeight();
-//		canvas.save();
 		Rect r = new Rect(width/2-100, height/2-100,width/2+100, height/2+100);
 		canvas.save();
 		canvas.clipRect(r);
-		Rect innerR = new Rect(r.left+30, r.top+30, r.right-30, r.bottom-30);
-		canvas.drawColor(Color.YELLOW);
-//		canvas.rotate(45,width/2,height/2);
-//		canvas.drawRect(innerR, mPaint);
+		canvas.drawColor(Color.GREEN);
+		float angle = (float) ((Math.toDegrees(Math.atan2(Math.abs(r.right-r.left), Math.abs((r.top-r.bottom))))));
+//		float angle = 10;
 		
-//		float  angle = (float) Math.toDegrees(Math.atan2(Math.abs(r.top-r.bottom),(Math.abs(r.right-r.left))));
-		float  angle = (float) Math.toDegrees(Math.atan2((r.top-r.bottom),(r.right-r.left)));
-		canvas.rotate(angle,r.left,r.bottom);
-//		Rect bounds = new Rect(r.left+50-25, r.left-50, r.right+50, r.left);
-		int bottom = (int) Math.sqrt(r.left*r.left+r.bottom*r.bottom);
-		Rect bounds = new Rect(0, bottom-25, 50, bottom);
-		
-//		mGradient.setBounds(r);
-////		mGradient.setBounds(width/2-100, height/2-100,width/2+100, height/2+100);
-//		mGradient.setColors(new int[]{0x333333, 0xB0333333});
-//		mGradient.setBounds(bounds);
-//		mGradient.setOrientation(Orientation.BL_TR);
-//		mGradient.draw(canvas);
-		canvas.drawRect(bounds, mPaint);
+		float x = r.left;
+		float  y = r.bottom;
+		canvas.rotate(-angle, x, y);
+//		int length = (int) Math.sqrt((r.left*r.left+r.bottom*r.bottom));
+//		float angle2 = (float) (angle+Math.toDegrees(Math.atan2(r.bottom, r.right)));
+		double randians = Math.toRadians(-angle);
+		//sin和cos传入的参数是弧度值，不是角度值
+		int newX = (int) (Math.cos(randians)*x-Math.sin(randians)*y);
+		int newY = (int) (Math.cos(randians)*y+Math.sin(randians)*x);
+		int len = (int) Math.sqrt((newX-x)*(newX-x)+(newY-y)*(newY-y));
+		int l = newX+20;
+		int t = newY-25;
+		int rl = l+50;
+		int b = newY;
+		Rect bounds = new Rect(l, t, rl, b);
+//		canvas.drawRect(bounds, mPaint);
+		canvas.drawCircle(newX+10, newY, 100, mPaint);
+//		canvas.drawLine(0, 0, newX+10, newY, mPaint);
+//		canvas.drawCircle(0, 0, 100, mPaint);
 		canvas.restore();
+//		mPaint.setColor(Color.BLUE);
+		canvas.drawLine(0, 0, newX, newY, mPaint);
+		/*Path path1 = new Path();
+		path1.moveTo(width/2-100, height/2-100);
+		path1.lineTo(width/2+100, height/2-100);
+		path1.lineTo(width/2+100, height/2+100);
+		path1.lineTo(width/2-100, height/2+100);
+		path1.close();
+		Path path2 = new Path();
+		path2.moveTo(width/2-100, height/2+100);
+		path2.lineTo(width/2+100, height/2+100);
+		path2.lineTo(width/2+100, height/2-100);
+		path2.close();
+		canvas.save();
+		canvas.clipRect(r);
+		canvas.rotate(45,0,height);
+		mGradient.setBounds(r);
+		mGradient.setColors(new int[]{0x333333, 0xB0333333});
+		mGradient.setOrientation(Orientation.BL_TR);
+		mGradient.draw(canvas);
 		
-//		canvas.restore();
+		canvas.clipPath(path1);
+		canvas.drawColor(Color.RED);
+		canvas.clipPath(path2, Op.DIFFERENCE);
+//		canvas.drawColor(Color.GREEN);
+		float sx = width/2-100;
+		float sy = height/2+100;
+		canvas.rotate(45, sx, sy);
+		float dis = (float) Math.sqrt((sx*sx+sy*sy));
+		float angle = 90-(float) Math.toDegrees(Math.atan(sx/sy));
+//		float angle2 = angle+45;
+		int sx_new = (int) (dis*Math.sin(angle));
+		int sy_new = (int) (dis*Math.cos(angle));
+		
+		mGradient.setBounds(sx_new, sy_new-25, sx_new+200, sy_new);
+//		mGradient.setColors(new int[]{0x333333, 0xB0333333});
+		mGradient.setColor(Color.GREEN);
+		mGradient.setOrientation(Orientation.BOTTOM_TOP);
+		mGradient.draw(canvas);
+		canvas.restore();*/
 	}
 	@Override
 	protected void initWidthAndHeight() {

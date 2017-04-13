@@ -1,6 +1,7 @@
 package com.demo.androiddemo.customview;
 
 import com.demo.androiddemo.R;
+import com.demo.androiddemo.utils.BookFlip;
 import com.demo.androiddemo.utils.Circle;
 import com.demo.androiddemo.utils.ImageUtils;
 import com.demo.androiddemo.utils.PathUtils;
@@ -19,6 +20,7 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Region.Op;
+import android.graphics.drawable.GradientDrawable;
 import android.support.v4.animation.AnimatorUpdateListenerCompat;
 import android.support.v4.animation.ValueAnimatorCompat;
 import android.util.AttributeSet;
@@ -55,6 +57,9 @@ public class BookView extends BaseView {
 	private CornerPos mCornerPos;
 	private float mDistanceX;
 	private float mDistanceY;
+	private GradientDrawable mFrontLeftShadow;
+	private GradientDrawable mFrontRightShadow;
+	private GradientDrawable mBackShadow;
 	private  enum State{
 		PREPARED,ANIMATORING;
 	}
@@ -85,6 +90,10 @@ public class BookView extends BaseView {
 		mPaint.setStyle(Style.STROKE);
 		mPaint.setStrokeWidth(5);
 		mPaint.setColor(Color.RED);
+		
+		mFrontLeftShadow = new GradientDrawable();
+		mFrontRightShadow = new GradientDrawable();
+		mBackShadow = new GradientDrawable();
 		
 		first = BitmapFactory.decodeResource(getResources(), R.drawable.tmp);
 		second = BitmapFactory.decodeResource(getResources(), R.drawable.test2);
@@ -144,7 +153,8 @@ public class BookView extends BaseView {
 		Rect srcR = new Rect(0, 0, getMeasuredWidth(), getMeasuredHeight());
 		//图片要绘制到屏幕上得范围
 		Rect dstR = new Rect(0, 0, getMeasuredWidth(), getMeasuredHeight());
-		Path[] paths = PathUtils.make(touchX, touchY, cornerX, cornerY);
+		BookFlip flip = PathUtils.make(touchX, touchY, cornerX, cornerY);
+		Path[] paths = flip.paths;
 		//画当前页要显示的内容
 		canvas.save();
 		canvas.clipPath(paths[0], Op.XOR);
@@ -166,8 +176,18 @@ public class BookView extends BaseView {
 		canvas.clipPath(paths[1], Op.INTERSECT);
 		canvas.drawColor(Color.WHITE);
 		canvas.restore();
+		
+		drawShadow(canvas,flip);
 	}
-	
+	private int[] colors = new int[]{0x333333, 0xB0333333};
+	private void drawShadow(Canvas canvas, BookFlip flip) {
+		canvas.save();
+		if(mCornerPos==CornerPos.RB){
+			float angle = (float) Math.toDegrees(Math.atan((Math.abs(flip.e1_y-flip.e2_y)/Math.abs(flip.e1_x-flip.e2_x))));
+			
+		}
+	}
+
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		if(mState==State.ANIMATORING){

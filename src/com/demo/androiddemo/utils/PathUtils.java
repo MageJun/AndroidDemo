@@ -247,36 +247,36 @@ public class PathUtils {
 	
 	
 	/**
-	 * 
+	 * 实现翻页效果的Path
 	 * @param touchx  手指点击处的x坐标
 	 * @param touchy  手指点击处的y坐标
-	 * @param srcx 翻页角的x坐标
-	 * @param srcy 翻页角的y坐标
+	 * @param cornerX 翻页角的x坐标
+	 * @param cornerY 翻页角的y坐标
 	 * @return
 	 */
-	public static Path[] make(float touchx,float touchy,float srcx,float srcy){
-		
-		Path path0 = new Path();//整个翻角区域
-		Path path1 = new Path();//显示第一页翻角背景区域
-		Path[] paths = {path0,path1};
+	public static BookFlip make(float touchx,float touchy,float cornerX,float cornerY){
+		BookFlip flip = new BookFlip();
+		Path[] paths = flip.paths;
+		Path path0 = paths[0];//整个翻角区域
+		Path path1 = paths[1];//显示第一页翻角背景区域
 		if(touchx==00&&touchy==0){
-			return paths;
+			return flip;
 		}
 		
-		float midX = (touchx+srcx)/2;//t s两点连线中点x坐标
-		float midY = (touchy+srcy)/2;//t s两点连线中点y坐标
+		float midX = (touchx+cornerX)/2;//t s两点连线中点x坐标
+		float midY = (touchy+cornerY)/2;//t s两点连线中点y坐标
 		
-		float dis_ms_x = (srcx-midX);//中点同翻页角在X方向上得距离差
-		float dis_ms_y = (midY-srcy);//中点同翻页角在Y方向上得距离差
+		float dis_ms_x = (cornerX-midX);//中点同翻页角在X方向上得距离差
+		float dis_ms_y = (midY-cornerY);//中点同翻页角在Y方向上得距离差
 		
-		float dis_mt_x = (srcx-midX);//中点同手指点击处在X方向上得距离差
-		float dis_mt_y = (midY-srcy);//中点同手指点击处在Y方向上得距离差
+		float dis_mt_x = (cornerX-midX);//中点同手指点击处在X方向上得距离差
+		float dis_mt_y = (midY-cornerY);//中点同手指点击处在Y方向上得距离差
 		
 		//两个控制点，是过t  x两点直线的垂直平分线，同X轴和Y轴的交点，c1是同X轴的交点，c2是同Y轴的交点
 		float c1_x = midX-(dis_ms_y*dis_ms_y)/dis_ms_x;
-		float c1_y = srcy;
+		float c1_y = cornerY;
 		
-		float c2_x = srcx;
+		float c2_x = cornerX;
 		float c2_y = midY+(dis_ms_x*dis_ms_x)/dis_ms_y;
 		
 		//两个贝塞尔曲线的起点，分别是过t m两点线段的垂直平分线，同tc1和tc2的交点，s1是同tc1的交点，是tc1的中点；s2是同tc2的交点，是tc2的中点
@@ -298,11 +298,11 @@ public class PathUtils {
 		
 		//直线的两点式 ：(x-x1)/(x1-x2)=(y-y1)/(y1-y2)
 		
-		float e1_x =(srcy-tc1_y)/(tc1_y-tc2_y)*(tc1_x-tc2_x)+tc1_x;
-		float e1_y = srcy;
+		float e1_x =(cornerY-tc1_y)/(tc1_y-tc2_y)*(tc1_x-tc2_x)+tc1_x;
+		float e1_y = cornerY;
 		
-		float e2_x =srcx;
-		float e2_y = (srcx-tc1_x)/(tc1_x-tc2_x)*(tc1_y-tc2_y)+tc1_y;
+		float e2_x =cornerX;
+		float e2_y = (cornerX-tc1_x)/(tc1_x-tc2_x)*(tc1_y-tc2_y)+tc1_y;
 		
 		//计算两个翻角最大范围的两个角。翻角的范围是个三角形，顶点是触点位置，另外两个点，分别是a1和a2
 		//这两个点的位置，是平行于e1e2、c1c2，并且在这两条直线中间的直线，记做直线a1a2,同两个贝塞尔曲线的交点位置
@@ -333,7 +333,7 @@ public class PathUtils {
 		path0.lineTo(touchx, touchy);
 		path0.lineTo(s1_x, s1_y);
 		path0.quadTo(c1_x, c1_y, e1_x, e1_y);
-		path0.lineTo(srcx, srcy);
+		path0.lineTo(cornerX, cornerY);
 		path0.close();
 		
 		path1.moveTo(a1_x, a1_y);
@@ -341,7 +341,27 @@ public class PathUtils {
 		path1.lineTo(a2_x, a2_y);
 		path1.close();
 		
-		return paths;
+		flip.touchX =touchx;
+		flip.touchY =touchy;
+		flip.cornerX = cornerX;
+		flip.cornerY = cornerY;
+		flip.s1_x = s1_x;
+		flip.s1_y = s1_y;
+		flip.e1_x = e1_x;
+		flip.e1_y = e1_y;
+		flip.s2_x = s2_x;
+		flip.s2_y = s2_y;
+		flip.e2_x = e2_x;
+		flip.c1_x = c1_x;
+		flip.c1_y = c1_y;
+		flip.c2_x = c2_x;
+		flip.c2_y = c2_y;
+		flip.a1_x = a1_x;
+		flip.a1_y = a1_y;
+		flip.a2_x = a2_x;
+		flip.a2_y = a2_y;
+		
+		return flip;
 	}
 	
 	

@@ -56,7 +56,7 @@ public class GradientView extends BaseView {
 		canvas.drawColor(Color.GREEN);
 		float angle = (float) ((Math.toDegrees(Math.atan2(Math.abs(r.right-r.left), Math.abs((r.top-r.bottom))))));
 //		float angle = 10;
-		
+		//test
 		float x = r.left;
 		float  y = r.bottom;
 		canvas.rotate(-angle, x, y);

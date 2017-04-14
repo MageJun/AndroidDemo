@@ -205,25 +205,14 @@ public class BookView extends BaseView {
 		int shadowWidth = 50;
 		drawBackShadow(canvas, flip, shadowWidth);
 		if(mCornerPos==CornerPos.RB){
-//			float x1 = flip.touchX;
-//			float y1 = flip.touchY;
-//			float x2 = flip.cornerX;
-//			float y2 = flip.cornerY;
 			double angle1 = Math.toDegrees(Math.atan((Math.abs(flip.touchY-flip.s1_y)/Math.abs(flip.touchX-flip.s1_x))));
 			double angle2 = Math.toDegrees(Math.atan((Math.abs(flip.touchY-flip.s2_y)/Math.abs(flip.touchX-flip.s2_x))));
 			double angle = 180-(180-angle1+angle2)/2-angle1;
 			float topX = (float) (flip.touchX-shadowWidth*Math.cos(angle));
 			float topY = (float) (flip.touchY-shadowWidth*Math.sin(angle));
-//			float topX = (float) (flip.touchX-shadowWidth);
-//			float topY = (float) (flip.touchY-shadowWidth*Math.tan(angle));
-			mPaint.setColor(Color.RED);
-			canvas.drawLine(0, 0, topX, topY, mPaint);
-			mPaint.setColor(Color.BLUE);
-			canvas.drawLine(0, 0, flip.touchX, flip.touchY, mPaint);
 			
 			Path path = new Path();
 			path.moveTo(topX, topY);
-//			path.lineTo(flip.touchX, flip.touchY);
 			path.lineTo(flip.cornerX, flip.cornerY);
 			path.lineTo(topX, flip.cornerY);
 			path.close();
@@ -252,11 +241,7 @@ public class BookView extends BaseView {
 			Rect bounds = new Rect(left, top, right, bottom);
 			mFrontLeftShadow.setBounds(bounds);
 			mFrontLeftShadow.draw(canvas);
-//			mPaint.setColor(Color.GREEN);
-//			mPaint.setStyle(Style.FILL);
-//			canvas.drawRect(bounds, mPaint);
 			canvas.restore();
-//			mPaint.setStyle(Style.STROKE);
 		}
 	}
 
@@ -323,7 +308,10 @@ public class BookView extends BaseView {
 		touchY = event.getRawY();
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
-			initCorner();
+			boolean result = initCorner();
+			if(!result){
+				return super.onTouchEvent(event);
+			}
 			break;
 		case MotionEvent.ACTION_MOVE:
 			
@@ -386,41 +374,34 @@ public class BookView extends BaseView {
 		}else if(mCornerPos==CornerPos.RB){
 			result = -width-touchY;
 		}
-/*		if(cornerX==0&&cornerY==0){
-			result=height*2-touchY;
-		}else if(cornerX==width&&cornerY==0){
-			result = height*2-touchY;
-		}else if(cornerX==0&&cornerY==height){
-			result = -width-touchY;
-		}else if(cornerX==width&&cornerY==height){
-			result = -width-touchY;
-		}
-*/		return result;
+		return result;
 	}
-
-	private void initCorner() {
+	private int rangeWidth = 100;//手指落点有效区间宽度
+	private boolean initCorner() {
 		int width = getMeasuredWidth();
 		int height = getMeasuredHeight();
-		if(touchX>=width/2&&(touchY>=height/2&&touchY<=height)){
+		if(touchX>=width-rangeWidth&&(touchY>=height-rangeWidth&&touchY<=height)){
 			cornerX = width;
 			cornerY = height;
 			mCornerPos = CornerPos.RB;
-		}else if(touchX>=width/2&&(touchY>=0&&touchY<=height/2)){
+			return true;
+		}else if(touchX>=width-rangeWidth&&(touchY>=0&&touchY<=rangeWidth)){
 			cornerX = width;
 			cornerY = 0;
 			mCornerPos = CornerPos.RT;
-		}else if((touchX<=width/2&&touchX>=0)&&(touchY>=0&&touchY<=height/2)){
+			return true;
+		}else if((touchX<=rangeWidth&&touchX>=0)&&(touchY>=0&&touchY<=rangeWidth)){
 			cornerX = 0;
 			cornerY = 0;
 			mCornerPos = CornerPos.LT;
-		}else if((touchX<=width/2&&touchX>=0)&&(touchY>=height/2&&touchY<=height)){
+			return true;
+		}else if((touchX<=rangeWidth&&touchX>=0)&&(touchY>=rangeWidth)){
 			cornerX = 0;
 			cornerY = height;
 			mCornerPos = CornerPos.LB;
-		}else{
-			cornerX = width;
-			cornerY = height;
+			return true;
 		}
+		return false;
 		
 	}
 

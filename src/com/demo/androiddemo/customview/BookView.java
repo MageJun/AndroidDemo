@@ -376,26 +376,26 @@ public class BookView extends BaseView {
 		}
 		return result;
 	}
-	private int rangeWidth = 100;//手指落点有效区间宽度
+	private int rangeWidth = 150;//手指落点有效区间宽度
 	private boolean initCorner() {
 		int width = getMeasuredWidth();
 		int height = getMeasuredHeight();
-		if(touchX>=width-rangeWidth&&(touchY>=height-rangeWidth&&touchY<=height)){
+		if(touchX>=width-rangeWidth&&(touchY>=height-rangeWidth)){
 			cornerX = width;
 			cornerY = height;
 			mCornerPos = CornerPos.RB;
 			return true;
-		}else if(touchX>=width-rangeWidth&&(touchY>=0&&touchY<=rangeWidth)){
+		}else if(touchX>=width-rangeWidth&&(touchY<=rangeWidth)){
 			cornerX = width;
 			cornerY = 0;
 			mCornerPos = CornerPos.RT;
 			return true;
-		}else if((touchX<=rangeWidth&&touchX>=0)&&(touchY>=0&&touchY<=rangeWidth)){
+		}else if((touchX<=rangeWidth)&&(touchY<=rangeWidth)){
 			cornerX = 0;
 			cornerY = 0;
 			mCornerPos = CornerPos.LT;
 			return true;
-		}else if((touchX<=rangeWidth&&touchX>=0)&&(touchY>=rangeWidth)){
+		}else if((touchX<=rangeWidth)&&(touchY>=rangeWidth)){
 			cornerX = 0;
 			cornerY = height;
 			mCornerPos = CornerPos.LB;

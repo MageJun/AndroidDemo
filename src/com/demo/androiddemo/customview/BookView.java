@@ -199,38 +199,119 @@ public class BookView extends BaseView {
 		drawShadow(canvas,flip);
 	}
 	private int[] colors = new int[]{0x333333, 0xB0333333};
-	private int[] colors2 = new int[]{0xFF111111, 0x10111111};
+	private int[] colors2 = new int[]{0xFF111111, 0x111111};
+	private int[] colors3 = new int[]{0x80888888, 0x888888};
 	private void drawShadow(Canvas canvas, BookFlip flip) {
+		int shadowWidth = 50;
+		drawBackShadow(canvas, flip, shadowWidth);
 		if(mCornerPos==CornerPos.RB){
-			float x1 = flip.a1_x;
-			float y1 = flip.a1_y;
-			float x2 = flip.a2_x;
-			float y2 = flip.a2_y;
-			float angle = (float) Math.toDegrees(Math.atan((Math.abs(y1-y2)/Math.abs(x1-x2))));
-			double length = Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
-			//话下一页画面上的背景阴影
+//			float x1 = flip.touchX;
+//			float y1 = flip.touchY;
+//			float x2 = flip.cornerX;
+//			float y2 = flip.cornerY;
+			double angle1 = Math.toDegrees(Math.atan((Math.abs(flip.touchY-flip.s1_y)/Math.abs(flip.touchX-flip.s1_x))));
+			double angle2 = Math.toDegrees(Math.atan((Math.abs(flip.touchY-flip.s2_y)/Math.abs(flip.touchX-flip.s2_x))));
+			double angle = 180-(180-angle1+angle2)/2-angle1;
+			float topX = (float) (flip.touchX-shadowWidth*Math.cos(angle));
+			float topY = (float) (flip.touchY-shadowWidth*Math.sin(angle));
+//			float topX = (float) (flip.touchX-shadowWidth);
+//			float topY = (float) (flip.touchY-shadowWidth*Math.tan(angle));
 			mPaint.setColor(Color.RED);
-			canvas.drawLine(0, 0, x1, y1, mPaint);
+			canvas.drawLine(0, 0, topX, topY, mPaint);
 			mPaint.setColor(Color.BLUE);
-			canvas.drawLine(0, 0, x2, y2, mPaint);
+			canvas.drawLine(0, 0, flip.touchX, flip.touchY, mPaint);
+			
+			Path path = new Path();
+			path.moveTo(topX, topY);
+//			path.lineTo(flip.touchX, flip.touchY);
+			path.lineTo(flip.cornerX, flip.cornerY);
+			path.lineTo(topX, flip.cornerY);
+			path.close();
 			canvas.save();
-			canvas.clipPath(flip.paths[0]);
-			canvas.clipPath(flip.paths[1], Op.DIFFERENCE);
-//			canvas.drawLine(0, 0, flip.e1_x, flip.e1_y, mPaint);
-			canvas.rotate(-angle, x1, y1);
-			int left = (int) x1-500;
-			int top = (int) y1;
-			int right = (int) (x1+length+500);
-//			mPaint.setColor(Color.BLUE);
-//			canvas.drawLine(left, top, right, top, mPaint);
-			int bottom = (int) y1+25;
+			canvas.clipPath(flip.paths[0],Op.XOR);
+			canvas.clipPath(path, Op.INTERSECT);
+			float rotate_x1 = flip.s1_x;
+			float rotate_y1 = flip.s1_y;
+			float rotate_x2 = flip.touchX;
+			float rotate_y2 = flip.touchY;
+			float rotateAngle = (float) Math.toDegrees(Math.atan((Math.abs(rotate_y1-rotate_y2)/Math.abs(rotate_x1-rotate_x2))));
+			canvas.rotate(rotateAngle, rotate_x1, rotate_y1);
+			mPaint.setColor(Color.YELLOW);
+			int left = 0;
+			int top = 0;
+			int right = 0;
+			int bottom = 0;
+			double length = Math.sqrt((rotate_x1-rotate_x2)*(rotate_x1-rotate_x2)+(rotate_y1-rotate_y2)*(rotate_y1-rotate_y2));
+			//阴影显示区的范围暂时写的大一些，防止有些空白未显示阴影
+			if(mCornerPos==CornerPos.RB){
+				 left = (int) (rotate_x1-length-500);
+				 top = (int) rotate_y1-100;
+				 right = (int) (rotate_x1+500);
+				 bottom = (int)rotate_y1+shadowWidth;
+			}
 			Rect bounds = new Rect(left, top, right, bottom);
-			mBackShadow.setBounds(bounds);
-//			mBackShadow.setColors(colors);
-			mBackShadow.draw(canvas);
+			mFrontLeftShadow.setBounds(bounds);
+			mFrontLeftShadow.draw(canvas);
+//			mPaint.setColor(Color.GREEN);
+//			mPaint.setStyle(Style.FILL);
 //			canvas.drawRect(bounds, mPaint);
 			canvas.restore();
+//			mPaint.setStyle(Style.STROKE);
 		}
+	}
+
+	private void drawBackShadow(Canvas canvas, BookFlip flip, int shadowWidth) {
+		float x1 = flip.a1_x;
+		float y1 = flip.a1_y;
+		float x2 = flip.a2_x;
+		float y2 = flip.a2_y;
+		float angle = (float) Math.toDegrees(Math.atan((Math.abs(y1-y2)/Math.abs(x1-x2))));
+		double length = Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
+		//话下一页画面上的背景阴影
+		canvas.save();
+		//计算下一页画面的显示区域
+		canvas.clipPath(flip.paths[0]);
+		canvas.clipPath(flip.paths[1], Op.DIFFERENCE);
+		//旋转画布
+		if(mCornerPos==CornerPos.LB||mCornerPos==CornerPos.RT){
+			canvas.rotate(angle,x1,y1);
+		}else{
+			canvas.rotate(-angle, x1, y1);
+		}
+		int left = 0;
+		int top = 0;
+		int right = 0;
+		int bottom = 0;
+		//阴影显示区的范围暂时写的大一些，防止有些空白未显示阴影
+		if(mCornerPos==CornerPos.RB){
+			 left = (int) x1-500;
+			 top = (int) y1-100;
+			 right = (int) (x1+length+500);
+			 bottom = (int) y1+shadowWidth;
+			 mBackShadow.setOrientation(Orientation.TOP_BOTTOM);
+		}else if(mCornerPos==CornerPos.LB){
+			 left = (int) (x1-length-500);
+			 top = (int) y1-100;
+			 right = (int) (x1+500);
+			 bottom = (int) y1+shadowWidth;
+			 mBackShadow.setOrientation(Orientation.TOP_BOTTOM);
+		}else if(mCornerPos==CornerPos.LT){
+			 left = (int) (x1-length-500);
+			 top = (int) y1-shadowWidth;
+			 right = (int) (x1+500);
+			 bottom = (int) y1+100;
+			 mBackShadow.setOrientation(Orientation.BOTTOM_TOP);
+		}else if(mCornerPos == CornerPos.RT){
+			 left = (int) x1-500;
+			 top = (int) y1-shadowWidth;
+			 right = (int) (x1+length+500);
+			 bottom = (int) y1+100;
+			 mBackShadow.setOrientation(Orientation.BOTTOM_TOP);
+		}
+		Rect bounds = new Rect(left, top, right, bottom);
+		mBackShadow.setBounds(bounds);
+		mBackShadow.draw(canvas);
+		canvas.restore();
 	}
 
 	@Override

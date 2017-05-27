@@ -7,23 +7,41 @@
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="21" />
-    
-    <uses-permission android:name="android.permission.VIBRATE"/>
-    <instrumentation android:name="android.test.InstrumentationTestRunner" android:targetPackage="com.demo.androiddemo"></instrumentation>
-<supports-screens  
-    	android:smallScreens="true"  
-   		android:normalScreens="true"  
-    	android:largeScreens="true"  
-    	android:resizeable="true"  
-    	android:anyDensity="true" />
+
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <instrumentation
+        android:name="android.test.InstrumentationTestRunner"
+        android:targetPackage="com.demo.androiddemo" >
+    </instrumentation>
+
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:resizeable="true"
+        android:smallScreens="true" />
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
+        android:name="com.demo.androiddemo.DemoApplication"
         android:allowBackup="true"
+        android:hasCode="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" android:hasCode="true" android:persistent="false">
-        <meta-data android:name="com.zed3.sipua.HOME" android:value="com.demo.homeUi"/>
-        <meta-data android:name="com.zed3.sipua.LAUNCHER" android:value="com.demo.launcher"/>
-         <uses-library android:name="android.test.runner" />
+        android:persistent="false"
+        android:theme="@style/AppTheme" >
+        <meta-data
+            android:name="com.zed3.sipua.HOME"
+            android:value="com.demo.homeUi" />
+        <meta-data
+            android:name="com.zed3.sipua.LAUNCHER"
+            android:value="com.demo.launcher" />
+
+        <uses-library android:name="android.test.runner" />
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" >
@@ -33,8 +51,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.demo.androiddemo.ReticularTestActivity"></activity>
-        <activity android:name="com.demo.androiddemo.ThirdActivity"></activity>
+        <activity android:name="com.demo.androiddemo.ReticularTestActivity" >
+        </activity>
+        <activity android:name="com.demo.androiddemo.ThirdActivity" >
+        </activity>
     </application>
 
 </manifest>

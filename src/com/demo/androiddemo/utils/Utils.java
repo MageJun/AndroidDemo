@@ -8,6 +8,7 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.WindowManager;
 
+import java.lang.reflect.Field;
 import java.util.Random;
 public class Utils {
 
@@ -79,6 +80,28 @@ public class Utils {
 		int disWidth = metric.widthPixels;
 		return metric;
    }
+   
+   /**
+    * 通过反射，获取状态栏的高度
+    * @param context
+    * @return
+    */
+   public static int getStatusBarHeight(Context context){
+       Class<?> c = null;
+       Object obj = null;
+       Field field = null;
+       int x = 0;
+       try {
+           c = Class.forName("com.android.internal.R$dimen");
+           obj = c.newInstance();
+           field = c.getField("status_bar_height");
+           x = Integer.parseInt(field.get(obj).toString());
+           return context.getResources().getDimensionPixelSize(x);
+       } catch (Exception e1) {
+           e1.printStackTrace();
+       }
+       return 0;
+}
    
    /**
     * 计算两点间直线距离

@@ -4,16 +4,20 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.demo.androiddemo.DemoApplication;
+import com.demo.androiddemo.reader.service.Reader;
+import com.demo.androiddemo.reader.service.ReaderImpl;
+import com.demo.androiddemo.reader.service.Reader.TextBitmap;
 
 import android.content.ComponentName;
 import android.content.Context;
+import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.test.AndroidTestCase;
 import android.text.TextUtils;
 import android.util.Log;
 
-public class LibraryTester extends AndroidTestCase {/*
+public class LibraryTester extends AndroidTestCase {
 	private static final String TAG = LibraryTester.class.getSimpleName();
 	private Context mTestContext;
 
@@ -30,7 +34,7 @@ public class LibraryTester extends AndroidTestCase {/*
 	}
 
 	
-	public void testLoadAllMetaData(){
+	/*public void testLoadAllMetaData(){
 		Map<String,AppMetaDatas> apps = MetaDataManager.getInstance(mContext).getMetaDataCollections();
 		Iterator<String> iterator = apps.keySet().iterator();
 		while(iterator.hasNext()){
@@ -62,7 +66,7 @@ public class LibraryTester extends AndroidTestCase {/*
 			}
 			Log.i(TAG, "mHomeComponetName: "+mHomeComponetName);
 		}
-	}
+	}*/
 	
 	public void testPath(){
 		Path path = new Path();
@@ -78,4 +82,17 @@ public class LibraryTester extends AndroidTestCase {/*
 	}
 	
 	
-*/}
+	public void testCreateBitmap(){
+		int width = 720;
+		int height = 1280;
+		Reader reader = new ReaderImpl();
+		String textStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ-abceefghijklmnopqrstuvwxyz";
+		char[] chars = textStr.toCharArray();
+		Paint paint = new Paint();
+		paint.setTextSize(15);
+		TextBitmap bitmap = reader.createTextBitmap(paint, chars, 0,width,height);
+		Log.i(TAG, "bitmap "+bitmap);
+	}
+	
+	
+}

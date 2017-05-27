@@ -1,6 +1,11 @@
 package com.demo.androiddemo.customview;
 
+import java.io.File;
+
 import com.demo.androiddemo.R;
+import com.demo.androiddemo.reader.service.ReadFile;
+import com.demo.androiddemo.reader.service.Reader;
+import com.demo.androiddemo.reader.service.ReaderImpl;
 import com.demo.androiddemo.utils.BookFlip;
 import com.demo.androiddemo.utils.Circle;
 import com.demo.androiddemo.utils.ImageUtils;
@@ -22,6 +27,9 @@ import android.graphics.RectF;
 import android.graphics.Region.Op;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.GradientDrawable.Orientation;
+import android.os.Environment;
+import android.os.Handler.Callback;
+import android.os.Message;
 import android.support.v4.animation.AnimatorUpdateListenerCompat;
 import android.support.v4.animation.ValueAnimatorCompat;
 import android.util.AttributeSet;
@@ -44,7 +52,7 @@ public class BookView extends BaseView {
 		super(context, attrs);
 		init(context);
 	}
-
+	private Context mContext;
 	private Paint mPaint;
 	private float touchX ;
 	private float touchY ;
@@ -84,6 +92,7 @@ public class BookView extends BaseView {
 		RB;
 	}
 	private void init(Context context) {
+		mContext = context;
 		mDisplay = Utils.getDisplayMetrics(context);
 		mState = State.PREPARED;
 		initPaint();
@@ -145,6 +154,26 @@ public class BookView extends BaseView {
 	}
 
 	private void initDemoImg() {
+		ReadFile mCurrentReadFile = new ReadFile();
+		mCurrentReadFile.setBookPath(Environment.getExternalStorageDirectory()+File.separator+"test.txt");
+		mCurrentReadFile.setLastIndex(1000);
+		int den = mDisplay.densityDpi;
+		com.demo.androiddemo.reader.service.Style readStyle = new com.demo.androiddemo.reader.service.Style();
+		readStyle.setBgColor(Color.YELLOW);
+		readStyle.setTextSize(18);
+		int statusHeight = Utils.getStatusBarHeight(mContext);
+		final ReaderImpl reader = new ReaderImpl(mCurrentReadFile,readStyle,mDisplay.widthPixels, mDisplay.heightPixels-statusHeight);
+		reader.load(new Callback() {
+			
+			@Override
+			public boolean handleMessage(Message msg) {
+				first = reader.getCurrentPage();
+				second = reader.getNextPage();
+				postInvalidate();
+				return false;
+			}
+		});
+		
 		first = BitmapFactory.decodeResource(getResources(), R.drawable.tmp);
 		second = BitmapFactory.decodeResource(getResources(), R.drawable.test2);
 		first = ImageUtils.compressImage( first, mDisplay.widthPixels, mDisplay.heightPixels);
@@ -213,8 +242,10 @@ public class BookView extends BaseView {
 			
 			Path path = new Path();
 			path.moveTo(topX, topY);
+			path.lineTo(flip.touchX, flip.touchY);
 			path.lineTo(flip.cornerX, flip.cornerY);
 			path.lineTo(topX, flip.cornerY);
+//			path.lineTo(flip.a1_x, flip.a1_y);
 			path.close();
 			canvas.save();
 			canvas.clipPath(flip.paths[0],Op.XOR);

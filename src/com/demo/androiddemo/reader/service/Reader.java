@@ -35,6 +35,7 @@ import android.graphics.BitmapFactory;
  * @author lwang
  * @version 1.0
  * @created 11-5月-2017 11:03:09
+ * 
  */
 public abstract class Reader {
 
@@ -205,7 +206,7 @@ public abstract class Reader {
 	private TextBitmap createTextBitmap(TextPaint paint, char[] chars,int offset) {
 		Bitmap tmpBitmap = Bitmap.createBitmap(mMaxWidth, mMaxHeight, Config.ARGB_8888);
 		Canvas tmpCanvas = new Canvas(tmpBitmap);
-		tmpCanvas.drawColor(mReadStyle.getBgColor());
+		tmpCanvas.drawBitmap(mReadStyle.getBg(),0,0,null);
 		float x = 0;
 		float y = 0;
 		StringBuffer sb = new StringBuffer();
@@ -263,7 +264,7 @@ public abstract class Reader {
 	private TextBitmap createTextBitmap2(TextPaint paint, char[] chars,int offset) {
 		Bitmap tmpBitmap = Bitmap.createBitmap(mMaxWidth, mMaxHeight, Config.ARGB_8888);
 		Canvas tmpCanvas = new Canvas(tmpBitmap);
-		tmpCanvas.drawColor(mReadStyle.getBgColor());
+		tmpCanvas.drawBitmap(mReadStyle.getBg(),0,0,null);
 		float x = 0;
 		float y = 0;
 		StringBuffer sb = new StringBuffer();

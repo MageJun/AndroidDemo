@@ -1,5 +1,6 @@
 package com.demo.androiddemo.reader.service;
 
+import android.graphics.Bitmap;
 
 /**
  * @author lwang
@@ -15,11 +16,16 @@ public class Style {
 	/**
 	 * 背景颜色
 	 */
-	private int bgColor;
+	private Bitmap bg;
 	/**
 	 * 翻页效果
 	 */
 	private int flipStyle;
+	
+	/**
+	 * 行间距
+	 */
+	private float rawSpace;
 
 	public Style(){
 
@@ -37,12 +43,12 @@ public class Style {
 		this.textSize = textSize;
 	}
 
-	public int getBgColor() {
-		return bgColor;
+	public Bitmap getBg() {
+		return bg;
 	}
 
-	public void setBgColor(int bgColor) {
-		this.bgColor = bgColor;
+	public void setBg(Bitmap bg) {
+		this.bg = bg;
 	}
 
 	public int getFlipStyle() {
@@ -52,5 +58,17 @@ public class Style {
 	public void setFlipStyle(int flipStyle) {
 		this.flipStyle = flipStyle;
 	}
+
+	public float getRawSpace() {
+		return rawSpace;
+	}
+
+	public void setRawSpace(float rawSpace) {
+		this.rawSpace = rawSpace;
+		if(rawSpace<0){
+			this.rawSpace = 0;
+		}
+	}
+	
 	
 }

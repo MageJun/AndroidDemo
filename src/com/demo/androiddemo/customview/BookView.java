@@ -16,9 +16,13 @@ import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
@@ -53,12 +57,18 @@ public class BookView extends BaseView {
 		init(context);
 	}
 	private Context mContext;
-	private Paint mPaint;
+	private Paint mPaint,mBgPaint;
+	private ColorMatrixColorFilter mColorMatrixFilter;
+	
+	Matrix mMatrix = new Matrix();
+	float[] mMatrixArray = { 0, 0, 0, 0, 0, 0, 0, 0, 1.0f };
+	
 	private float touchX ;
 	private float touchY ;
 	private float cornerX;
 	private float cornerY;
-	private Bitmap first,second;
+	private Bitmap first,second,firstTmp,secondTmp,back,backTmp;
+	private Canvas firstCanvas,secondCanvas,backCanvas;
 	private DisplayMetrics mDisplay;//获取屏幕宽高，用来将视图默认设置为全屏
 	private ValueAnimator mAnimator1;
 	private ValueAnimator mAnimator2;
@@ -102,6 +112,18 @@ public class BookView extends BaseView {
 		initDemoImg();
 		
 		initAnimators();
+		
+		initColorFilter();
+	}
+
+	private void initColorFilter() {
+		ColorMatrix cm = new ColorMatrix();
+		float array[] = { 0.55f, 0, 0, 0, 80.0f, 0, 0.55f, 0, 0, 80.0f, 0, 0,
+				0.55f, 0, 80.0f, 0, 0, 0, 0.2f, 0 };
+		cm.set(array);
+		mColorMatrixFilter = new ColorMatrixColorFilter(cm);
+		mBgPaint.setColorFilter(mColorMatrixFilter);
+		
 	}
 
 	private void initPaint() {
@@ -110,6 +132,8 @@ public class BookView extends BaseView {
 		mPaint.setStyle(Style.STROKE);
 		mPaint.setStrokeWidth(5);
 		mPaint.setColor(Color.RED);
+		
+		mBgPaint = new Paint(mPaint);
 	}
 
 	private void initAnimators() {
@@ -159,11 +183,21 @@ public class BookView extends BaseView {
 		mCurrentReadFile.setLastIndex(1000);
 		int den = mDisplay.densityDpi;
 		com.demo.androiddemo.reader.service.Style readStyle = new com.demo.androiddemo.reader.service.Style();
-		readStyle.setBgColor(Color.YELLOW);
-		readStyle.setTextSize(18);
 		int statusHeight = Utils.getStatusBarHeight(mContext);
-		final ReaderImpl reader = new ReaderImpl(mCurrentReadFile,readStyle,mDisplay.widthPixels, mDisplay.heightPixels-statusHeight);
-		reader.load(new Callback() {
+		firstTmp =Bitmap.createBitmap(mDisplay.widthPixels, mDisplay.heightPixels-statusHeight, Config.ARGB_8888); 
+		secondTmp =Bitmap.createBitmap(mDisplay.widthPixels, mDisplay.heightPixels-statusHeight, Config.ARGB_8888); 
+		backTmp =Bitmap.createBitmap(mDisplay.widthPixels, mDisplay.heightPixels-statusHeight, Config.ARGB_8888); 
+		firstCanvas = new Canvas(firstTmp);
+		secondCanvas = new Canvas(secondTmp);
+		backCanvas = new Canvas(backTmp);
+		Bitmap bg = Bitmap.createBitmap(mDisplay.widthPixels, mDisplay.heightPixels-statusHeight, Config.ARGB_8888);
+		Canvas bgCanvas = new Canvas(bg);
+		bgCanvas.drawColor(Color.YELLOW);
+		readStyle.setBg(bg);
+		readStyle.setTextSize(18);
+		readStyle.setRawSpace(0.5f);
+		mReader = new ReaderImpl(mDisplay.widthPixels, mDisplay.heightPixels-statusHeight, readStyle);
+		/*reader.load(new Callback() {
 			
 			@Override
 			public boolean handleMessage(Message msg) {
@@ -172,12 +206,58 @@ public class BookView extends BaseView {
 				postInvalidate();
 				return false;
 			}
-		});
-		
-		first = BitmapFactory.decodeResource(getResources(), R.drawable.tmp);
-		second = BitmapFactory.decodeResource(getResources(), R.drawable.test2);
-		first = ImageUtils.compressImage( first, mDisplay.widthPixels, mDisplay.heightPixels);
-		second = ImageUtils.compressImage( second,mDisplay.widthPixels, mDisplay.heightPixels);
+		});*/
+		///storage/emulated/0/test.txt
+//		mReader.openBook("resources/test.txt", 0);
+		String filePath = Environment.getExternalStorageDirectory()+File.separator+"read_tmp.txt";
+		mReader.openBook(filePath, 0);
+		mReader.draw(firstCanvas);
+		/*mReader.pageDown();
+		mReader.draw(secondCanvas);*/
+//		first = BitmapFactory.decodeResource(getResources(), R.drawable.tmp);
+//		second = BitmapFactory.decodeResource(getResources(), R.drawable.test2);
+		updateBitmaps();
+//		first = ImageUtils.compressImage( firstTmp, mDisplay.widthPixels, mDisplay.heightPixels);
+//		second = ImageUtils.compressImage( secondTmp,mDisplay.widthPixels, mDisplay.heightPixels);
+	}
+	
+	private void updateBitmaps(){
+		this.first = firstTmp;
+		this.second = secondTmp;
+	}
+	
+	private Bitmap makeBgBitmap(Bitmap bitmap){
+//		Bitmap b = Bitmap.createBitmap(mWidth, mHeight, Config.ARGB_8888);
+//		Canvas canvas = new Canvas(b);
+		 Matrix matrix = new Matrix();
+//       matrix.setRotate(90,bm.getWidth()/2,bm.getHeight());
+//       matrix.setTranslate(20,20);
+       //镜子效果：
+       matrix.setScale(-1,1);//翻转
+//       matrix.postTranslate(bitmap.getWidth(),0);
+//       canvas.drawBitmap(bitmap,matrix,paint);
+       return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+	}
+	private void drawBgBitmap(Bitmap bitmap,Canvas canvas,BookFlip flip){
+		float mCornerX = flip.cornerX;
+		float mCornerY = flip.cornerY;
+		float mBezierControl1X = flip.c1_x;
+		float mBezierControl1Y = flip.c1_y;
+		float mBezierControl2X = flip.c2_x;
+		float mBezierControl2Y = flip.c2_y;
+		float dis = (float) Math.hypot(mCornerX - mBezierControl1X,
+				mBezierControl2Y - mCornerY);
+		float f8 = (mCornerX - mBezierControl1X) / dis;
+		float f9 = (mBezierControl2Y - mCornerY) / dis;
+		mMatrixArray[0] = 1 - 2 * f9 * f9;
+		mMatrixArray[1] = 2 * f8 * f9;
+		mMatrixArray[3] = mMatrixArray[1];
+		mMatrixArray[4] = 1 - 2 * f8 * f8;
+		mMatrix.reset();
+		mMatrix.setValues(mMatrixArray);
+		mMatrix.preTranslate(-mBezierControl1X, -mBezierControl1Y);
+		mMatrix.postTranslate(mBezierControl1X, mBezierControl1Y);
+		canvas.drawBitmap(bitmap, mMatrix, mBgPaint);
 	}
 
 	private void initShadows() {
@@ -222,7 +302,9 @@ public class BookView extends BaseView {
 		canvas.save();
 		canvas.clipPath(paths[0]);
 		canvas.clipPath(paths[1], Op.INTERSECT);
-		canvas.drawColor(Color.WHITE);
+		drawBgBitmap(first,canvas,flip);
+//		canvas.drawBitmap(bg,srcR,dstR, mBgPaint);
+//		canvas.drawColor(Color.WHITE);
 		canvas.restore();
 		
 		drawShadow(canvas,flip);
@@ -233,12 +315,22 @@ public class BookView extends BaseView {
 	private void drawShadow(Canvas canvas, BookFlip flip) {
 		int shadowWidth = 50;
 		drawBackShadow(canvas, flip, shadowWidth);
+		if(true){
+			return ;
+		}
 		if(mCornerPos==CornerPos.RB){
 			double angle1 = Math.toDegrees(Math.atan((Math.abs(flip.touchY-flip.s1_y)/Math.abs(flip.touchX-flip.s1_x))));
 			double angle2 = Math.toDegrees(Math.atan((Math.abs(flip.touchY-flip.s2_y)/Math.abs(flip.touchX-flip.s2_x))));
 			double angle = 180-(180-angle1+angle2)/2-angle1;
-			float topX = (float) (flip.touchX-shadowWidth*Math.cos(angle));
-			float topY = (float) (flip.touchY-shadowWidth*Math.sin(angle));
+			
+			double d1 = (float) shadowWidth * 1.414 * Math.cos(angle);
+			double d2 = (float) shadowWidth * 1.414 * Math.sin(angle);
+			
+			
+//			float topX = (float) (flip.touchX-shadowWidth*Math.cos(angle));
+//			float topY = (float) (flip.touchY-shadowWidth*Math.sin(angle));
+			float topX = (float) (flip.touchX-d1);
+			float topY = (float) (flip.touchY-d2);
 			
 			Path path = new Path();
 			path.moveTo(topX, topY);
@@ -343,11 +435,20 @@ public class BookView extends BaseView {
 			if(!result){
 				return super.onTouchEvent(event);
 			}
+			mReader.draw(firstCanvas);
+			if(touchX>mDisplay.widthPixels/2){
+				mReader.turnNext();
+			}else{
+				mReader.turnPre();
+			}
+			mReader.draw(secondCanvas);
+			updateBitmaps();
 			break;
 		case MotionEvent.ACTION_MOVE:
 			
 			break;
 		case MotionEvent.ACTION_UP:
+//			mReader.pageDown();
 			startAnimator();
 			break;
 		}
@@ -366,6 +467,11 @@ public class BookView extends BaseView {
 			mDistanceY = calcDistanceY(true);
 			mAnimator1.start();
 		}else{
+		/*	mReader.pageUp();
+			mReader.draw(firstCanvas);
+			mReader.pageDown();
+			mReader.draw(secondCanvas);
+			updateBitmaps();*/
 			mDistanceX = calcDistanceX(false);
 			mDistanceY = calcDistanceY(false);
 			mAnimator2.start();
@@ -407,7 +513,8 @@ public class BookView extends BaseView {
 		}
 		return result;
 	}
-	private int rangeWidth = 150;//手指落点有效区间宽度
+	private int rangeWidth = 300;//手指落点有效区间宽度
+	private ReaderImpl mReader;
 	private boolean initCorner() {
 		int width = getMeasuredWidth();
 		int height = getMeasuredHeight();
